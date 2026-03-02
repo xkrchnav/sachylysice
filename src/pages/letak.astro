@@ -1,0 +1,365 @@
+---
+import { Image } from "astro:assets";
+import vejceSachy from "../assets/images/jarni/vejceSachy.jpeg";
+
+const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%3A%2F%2Fwww.sachylysice.cz&bgcolor=ffffff&color=1a1a1a&qzone=2&format=svg";
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Leták – Jarní šachový turnaj 2026 | Šachy Lysice</title>
+    <style>
+      /* ── reset ── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      /* ── screen wrapper ── */
+      body {
+        background: #e8e8e8;
+        font-family: Georgia, "Times New Roman", serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 2rem 1rem;
+        min-height: 100vh;
+      }
+
+      /* ── screen-only controls ── */
+      .screen-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn {
+        background: #1a472a;
+        color: #fff;
+        border: none;
+        padding: .65rem 1.6rem;
+        font-size: 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn:hover { background: #2d6a44; }
+      .btn--secondary { background: #555; }
+      .btn--secondary:hover { background: #333; }
+      .hint {
+        font-size: .85rem;
+        color: #555;
+        font-family: sans-serif;
+        text-align: center;
+        max-width: 36rem;
+      }
+
+      /* ════════════════════════
+         A4 LANDSCAPE SHEET
+         ════════════════════════ */
+      .a4-sheet {
+        width: 297mm;
+        height: 210mm;
+        background: #fff;
+        display: flex;
+        position: relative;
+        box-shadow: 0 4px 24px rgba(0,0,0,.25);
+        overflow: hidden;
+      }
+
+      /* dashed cut line */
+      .a4-sheet::after {
+        content: "✂";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1rem;
+        color: #bbb;
+        z-index: 10;
+      }
+      .cut-line {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        border-left: 1.5px dashed #ccc;
+        z-index: 5;
+      }
+
+      /* ════════════════════════
+         SINGLE A5 FLYER
+         ════════════════════════ */
+      .flyer {
+        width: 148.5mm;
+        height: 210mm;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+        color: #1a1a1a;
+      }
+
+      /* chess-stripe header */
+      .flyer__header {
+        background: #1a1a1a;
+        color: #fff;
+        text-align: center;
+        padding: 4mm 4mm 3mm;
+        flex-shrink: 0;
+      }
+      .flyer__chess-stripe {
+        display: flex;
+        height: 5mm;
+        margin-bottom: 3mm;
+      }
+      .flyer__chess-stripe span {
+        flex: 1;
+      }
+      .flyer__chess-stripe span:nth-child(odd)  { background: #fff; }
+      .flyer__chess-stripe span:nth-child(even) { background: #1a1a1a; border: 1px solid #555; }
+
+      .flyer__eyebrow {
+        font-family: sans-serif;
+        font-size: 7pt;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 1.5mm;
+      }
+      .flyer__title {
+        font-size: 16pt;
+        font-weight: bold;
+        line-height: 1.1;
+        color: #fff;
+      }
+      .flyer__title em {
+        color: #d4a017;
+        font-style: normal;
+      }
+
+      /* image */
+      .flyer__img-wrap {
+        flex-shrink: 0;
+        height: 52mm;
+        overflow: hidden;
+      }
+      .flyer__img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 40%;
+        display: block;
+      }
+
+      /* info grid */
+      .flyer__body {
+        flex: 1;
+        padding: 4mm 5mm 2mm;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5mm;
+      }
+
+      .flyer__tagline {
+        font-size: 9pt;
+        font-style: italic;
+        color: #444;
+        border-left: 3px solid #d4a017;
+        padding-left: 3mm;
+        margin-bottom: 1mm;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 2.5mm 3mm;
+        font-size: 10pt;
+      }
+      .info-grid dt {
+        font-weight: bold;
+        color: #1a472a;
+        white-space: nowrap;
+        font-family: sans-serif;
+        font-size: 9pt;
+      }
+      .info-grid dd {
+        color: #1a1a1a;
+        font-size: 10.5pt;
+      }
+      .info-grid dd strong {
+        font-size: 12pt;
+      }
+
+      .flyer__note {
+        font-size: 7.5pt;
+        color: #666;
+        font-family: sans-serif;
+        line-height: 1.4;
+        border-top: 1px solid #eee;
+        padding-top: 2mm;
+        margin-top: auto;
+      }
+
+      /* bottom bar */
+      .flyer__footer {
+        background: #1a1a1a;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 3mm 4mm;
+        gap: 3mm;
+        flex-shrink: 0;
+      }
+      .flyer__qr-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1mm;
+      }
+      .flyer__qr-block img {
+        width: 20mm;
+        height: 20mm;
+        display: block;
+        background: #fff;
+        border-radius: 3px;
+      }
+      .flyer__qr-label {
+        font-family: sans-serif;
+        font-size: 5.5pt;
+        color: #aaa;
+        letter-spacing: .05em;
+      }
+      .flyer__contact {
+        text-align: right;
+        flex: 1;
+      }
+      .flyer__contact p {
+        font-size: 8pt;
+        color: #bbb;
+        font-family: sans-serif;
+        line-height: 1.5;
+      }
+      .flyer__contact strong {
+        display: block;
+        font-size: 12pt;
+        color: #d4a017;
+        font-family: Georgia, serif;
+        letter-spacing: .03em;
+      }
+      .flyer__web {
+        font-size: 7.5pt;
+        color: #888;
+        font-family: sans-serif;
+      }
+
+      /* ── PRINT ── */
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+          margin: 0;
+          display: block;
+        }
+        .screen-controls, .hint { display: none; }
+        .a4-sheet {
+          width: 297mm;
+          height: 210mm;
+          box-shadow: none;
+          page-break-after: avoid;
+        }
+        @page {
+          size: A4 landscape;
+          margin: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="screen-controls">
+      <button class="btn" onclick="window.print()">🖨 Vytisknout</button>
+      <a class="btn btn--secondary" href="/">← Zpět na web</a>
+    </div>
+    <p class="hint">
+      Stránka obsahuje <strong>dva letáčky A5</strong> vedle sebe na formátu A4 na šíř.
+      Vytiskněte, přeložte a nastřihněte. Nebo sdílejte odkaz na leták přímo.
+    </p>
+
+    <div class="a4-sheet">
+      <div class="cut-line"></div>
+
+      <!-- ── FLYER 1 ── -->
+      {[1, 2].map(() => (
+        <article class="flyer">
+          <header class="flyer__header">
+            <div class="flyer__chess-stripe">
+              {Array.from({length: 14}).map((_, i) => <span />)}
+            </div>
+            <p class="flyer__eyebrow">♟ Šachy Lysice &nbsp;·&nbsp; Lysice</p>
+            <h1 class="flyer__title">Jarní šachový<br/> turnaj <em>2026</em></h1>
+          </header>
+
+          <div class="flyer__img-wrap">
+            <Image
+              src={vejceSachy}
+              alt="Jarní šachový turnaj – šachové vejce v lysických barvách"
+              width={560}
+              height={210}
+              quality={85}
+            />
+          </div>
+
+          <div class="flyer__body">
+            <p class="flyer__tagline">
+              Přijďte si zahrát, popovídat a strávit jarní neděli nad šachovnicí.
+            </p>
+
+            <dl class="info-grid">
+              <dt>📅 Kdy</dt>
+              <dd><strong>Neděle 12. 4. 2026</strong></dd>
+
+              <dt>⏰ Čas</dt>
+              <dd>10:00 – 18:00</dd>
+
+              <dt>📍 Kde</dt>
+              <dd>Lysické Jablíčko, Lysice</dd>
+
+              <dt>🏆 Systém</dt>
+              <dd>Švýcarský – férový pro všechny</dd>
+
+              <dt>📲 Přihláška</dt>
+              <dd>SMS na 777 347 591</dd>
+            </dl>
+
+            <p class="flyer__note">
+              Turnaj je otevřený všem – začátečníkům i zkušeným hráčům.
+              Švýcarský systém zajistí, že si vždy zahrajete s někým podobné úrovně.
+              Vstupné symbolické. 🍏 Díky Lysickému Jablíčku za prostory.
+            </p>
+          </div>
+
+          <footer class="flyer__footer">
+            <div class="flyer__qr-block">
+              <img src={qr} alt="QR kód na web sachylysice.cz" />
+              <span class="flyer__qr-label">více info</span>
+            </div>
+            <div class="flyer__contact">
+              <p>Přihlášení a info:</p>
+              <strong>777 347 591</strong>
+              <p class="flyer__web">www.sachylysice.cz</p>
+            </div>
+          </footer>
+        </article>
+      ))}
+    </div>
+
+  </body>
+</html>

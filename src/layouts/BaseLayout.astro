@@ -560,9 +560,34 @@ const { title, description } = Astro.props;
     border: 1px solid #e8e2d8;
   }
 
-  /* ========================================
-     ARCHIVE SECTION
-     ======================================== */
+  .letak-promo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+    padding: 1.25rem 1.5rem;
+    background: #f0f4f0;
+    border: 1px dashed #7aaa8a;
+    border-radius: .75rem;
+    text-align: center;
+    font-size: .95rem;
+    color: #3a5a3a;
+  }
+
+  .btn-letak {
+    display: inline-block;
+    background: #1a472a;
+    color: #fff;
+    padding: .55rem 1.4rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: .95rem;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .btn-letak:hover { background: #2d6a44; }
+
+
   .section--archive {
     background: rgba(245, 240, 232, 0.6);
   }
