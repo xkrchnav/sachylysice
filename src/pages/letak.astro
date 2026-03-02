@@ -1,7 +1,8 @@
 ---
-import { Image } from "astro:assets";
+import { getImage } from "astro:assets";
 import vejceSachy from "../assets/images/jarni/vejceSachy.jpeg";
 
+const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
 const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%3A%2F%2Fwww.sachylysice.cz&bgcolor=ffffff&color=1a1a1a&qzone=2&format=svg";
 ---
 
@@ -10,15 +11,23 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Leták – Jarní šachový turnaj 2026 | Šachy Lysice</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Leták – Jarní šachové probuzení 2026 | Šachy Lysice</title>
     <style>
-      /* ── reset ── */
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      /* ── screen wrapper ── */
+      :root {
+        --green-ink: #1b5e3a;
+        --green-deep: #0f3f28;
+        --sun-gold: #e7b32a;
+        --sun-soft: #f6e8b6;
+        --ink: #1a1a1a;
+      }
+
       body {
-        background: #e8e8e8;
-        font-family: Georgia, "Times New Roman", serif;
+        background: radial-gradient(circle at top, #f5fbf2 0%, #e6efe7 40%, #e8e8e8 100%);
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -27,258 +36,187 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
         min-height: 100vh;
       }
 
-      /* ── screen-only controls ── */
+      /* ── screen-only ── */
       .screen-controls {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: flex; gap: 1rem; align-items: center;
+        flex-wrap: wrap; justify-content: center;
       }
       .btn {
-        background: #1a472a;
-        color: #fff;
-        border: none;
-        padding: .65rem 1.6rem;
-        font-size: 1rem;
-        border-radius: 6px;
-        cursor: pointer;
-        font-family: inherit;
-        text-decoration: none;
+        background: var(--green-ink); color: #fff; border: none;
+        padding: .65rem 1.6rem; font-size: 1rem; border-radius: 6px;
+        cursor: pointer; font-family: inherit; text-decoration: none;
         display: inline-block;
       }
-      .btn:hover { background: #2d6a44; }
+      .btn:hover { background: #2f7a50; }
       .btn--secondary { background: #555; }
       .btn--secondary:hover { background: #333; }
       .hint {
-        font-size: .85rem;
-        color: #555;
-        font-family: sans-serif;
-        text-align: center;
-        max-width: 36rem;
+        font-size: .85rem; color: #555; font-family: sans-serif;
+        text-align: center; max-width: 36rem;
       }
 
-      /* ════════════════════════
-         A4 LANDSCAPE SHEET
-         ════════════════════════ */
+      /* ── A4 landscape sheet ── */
       .a4-sheet {
-        width: 297mm;
-        height: 210mm;
-        background: #fff;
-        display: flex;
-        position: relative;
+        width: 297mm; height: 210mm; background: #fff;
+        display: flex; position: relative;
         box-shadow: 0 4px 24px rgba(0,0,0,.25);
-        overflow: hidden;
+        overflow: hidden; print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
       }
-
-      /* dashed cut line */
       .a4-sheet::after {
-        content: "✂";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 1rem;
-        color: #bbb;
-        z-index: 10;
+        content: "✂"; position: absolute;
+        left: 50%; top: 50%; transform: translate(-50%, -50%);
+        font-size: 1rem; color: #bbb; z-index: 10;
       }
       .cut-line {
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 0;
-        border-left: 1.5px dashed #ccc;
-        z-index: 5;
+        position: absolute; left: 50%; top: 0; bottom: 0;
+        width: 0; border-left: 1.5px dashed #ccc; z-index: 5;
       }
 
-      /* ════════════════════════
-         SINGLE A5 FLYER
-         ════════════════════════ */
+      /* ── A5 flyer ── */
       .flyer {
-        width: 148.5mm;
-        height: 210mm;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        position: relative;
-        background: #fff;
-        color: #1a1a1a;
+        width: 148.5mm; height: 210mm;
+        display: flex; flex-direction: column;
+        overflow: hidden; background: #fff; color: var(--ink);
       }
 
-      /* chess-stripe header */
-      .flyer__header {
-        background: #1a1a1a;
-        color: #fff;
-        text-align: center;
-        padding: 4mm 4mm 3mm;
-        flex-shrink: 0;
+      /* ── hero (image bg + overlay + text) ── */
+      .flyer__hero {
+        position: relative; flex-shrink: 0;
+        height: 118mm; overflow: hidden;
+        background-size: cover; background-position: center 35%;
+        display: flex; flex-direction: column;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+      .flyer__hero::before {
+        content: "";
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(
+          170deg,
+          rgba(11, 43, 28, 0.70) 0%,
+          rgba(15, 63, 40, 0.50) 35%,
+          rgba(15, 63, 40, 0.30) 65%,
+          rgba(0, 0, 0, 0.20) 100%
+        );
+        z-index: 1;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
       }
       .flyer__chess-stripe {
-        display: flex;
-        height: 5mm;
+        position: relative; z-index: 2;
+        display: flex; height: 4.2mm; flex-shrink: 0;
+      }
+      .flyer__chess-stripe span { flex: 1; }
+      .flyer__chess-stripe span:nth-child(odd)  { background: rgba(255,255,255,.8); }
+      .flyer__chess-stripe span:nth-child(even) { background: rgba(11, 43, 28, .65); }
+
+      .flyer__hero-text {
+        position: relative; z-index: 2;
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        padding: 3mm 5mm 5mm; text-align: center;
+      }
+      .flyer__eyebrow {
+        font-family: sans-serif; font-size: 13pt; font-weight: 700;
+        letter-spacing: .28em; text-transform: uppercase;
+        color: #fff; margin-bottom: 4mm;
+        text-shadow: 0 1px 8px rgba(0,0,0,.8);
+      }
+      .flyer__title { line-height: 1; color: #fff; }
+      .flyer__title-sub {
+        display: block; font-size: 18pt; font-weight: 700;
+        letter-spacing: .15em; text-transform: uppercase;
+        color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.7);
         margin-bottom: 3mm;
       }
-      .flyer__chess-stripe span {
-        flex: 1;
+      .flyer__title-main {
+        display: block; font-size: 48pt; font-weight: 900;
+        text-transform: uppercase; letter-spacing: .08em;
+        color: var(--sun-gold);
+        text-shadow: 0 3px 16px rgba(0,0,0,.7), 0 0 60px rgba(231,179,42,.35);
+        line-height: 1; margin-bottom: 4mm;
       }
-      .flyer__chess-stripe span:nth-child(odd)  { background: #fff; }
-      .flyer__chess-stripe span:nth-child(even) { background: #1a1a1a; border: 1px solid #555; }
-
-      .flyer__eyebrow {
-        font-family: sans-serif;
-        font-size: 7pt;
-        letter-spacing: .15em;
-        text-transform: uppercase;
-        color: #aaa;
-        margin-bottom: 1.5mm;
-      }
-      .flyer__title {
-        font-size: 16pt;
-        font-weight: bold;
-        line-height: 1.1;
-        color: #fff;
-      }
-      .flyer__title em {
-        color: #d4a017;
-        font-style: normal;
+      .flyer__title-year {
+        display: block; font-size: 18pt; font-weight: bold;
+        color: #fff; letter-spacing: .4em;
+        text-shadow: 0 2px 10px rgba(0,0,0,.7);
       }
 
-      /* image */
-      .flyer__img-wrap {
-        flex-shrink: 0;
-        height: 52mm;
-        overflow: hidden;
-      }
-      .flyer__img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center 40%;
-        display: block;
-      }
-
-      /* info grid */
+      /* ── body info ── */
       .flyer__body {
-        flex: 1;
-        padding: 4mm 5mm 2mm;
-        display: flex;
-        flex-direction: column;
-        gap: 2.5mm;
+        flex: 1; padding: 4mm 6mm 2mm;
+        display: flex; flex-direction: column; gap: 2.5mm;
       }
-
       .flyer__tagline {
-        font-size: 9pt;
-        font-style: italic;
-        color: #444;
-        border-left: 3px solid #d4a017;
-        padding-left: 3mm;
-        margin-bottom: 1mm;
+        font-size: 11pt; font-weight: bold; color: var(--green-deep);
+        border-left: 4px solid var(--sun-gold);
+        padding-left: 4mm; margin-bottom: 1mm; line-height: 1.3;
       }
-
       .info-grid {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 2.5mm 3mm;
-        font-size: 10pt;
+        display: grid; grid-template-columns: auto 1fr;
+        gap: 3mm 4mm; font-size: 11pt;
       }
       .info-grid dt {
-        font-weight: bold;
-        color: #1a472a;
-        white-space: nowrap;
-        font-family: sans-serif;
-        font-size: 9pt;
+        font-weight: bold; color: var(--green-ink);
+        white-space: nowrap; font-family: sans-serif; font-size: 10pt;
       }
-      .info-grid dd {
-        color: #1a1a1a;
-        font-size: 10.5pt;
+      .info-grid dd { color: var(--ink); font-size: 12pt; line-height: 1.4; }
+      .info-grid dd strong { font-size: 14pt; }
+      .flyer__cta {
+        margin-top: 1mm; padding: 3mm 4mm; border-radius: 6px;
+        background: linear-gradient(90deg, var(--sun-soft), #fff8d8);
+        color: var(--green-deep); font-family: sans-serif; font-size: 10pt;
+        display: flex; align-items: center; justify-content: space-between; gap: 3mm;
       }
-      .info-grid dd strong {
-        font-size: 12pt;
+      .flyer__cta strong {
+        color: var(--green-ink); font-size: 13pt; letter-spacing: .03em;
       }
-
       .flyer__note {
-        font-size: 7.5pt;
-        color: #666;
-        font-family: sans-serif;
-        line-height: 1.4;
-        border-top: 1px solid #eee;
-        padding-top: 2mm;
-        margin-top: auto;
+        font-size: 7.5pt; color: #5b5b5b; font-family: sans-serif;
+        line-height: 1.4; border-top: 1px solid #eee;
+        padding-top: 2mm; margin-top: auto;
       }
 
-      /* bottom bar */
+      /* ── footer ── */
       .flyer__footer {
-        background: #1a1a1a;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 3mm 4mm;
-        gap: 3mm;
-        flex-shrink: 0;
+        background: #0f2f20; color: #fff;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 2.5mm 4mm; gap: 3mm; flex-shrink: 0;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
       }
       .flyer__qr-block {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1mm;
+        display: flex; flex-direction: column; align-items: center; gap: 1mm;
       }
       .flyer__qr-block img {
-        width: 20mm;
-        height: 20mm;
-        display: block;
-        background: #fff;
-        border-radius: 3px;
+        width: 18mm; height: 18mm; display: block;
+        background: #fff; border-radius: 3px;
       }
       .flyer__qr-label {
-        font-family: sans-serif;
-        font-size: 5.5pt;
-        color: #aaa;
-        letter-spacing: .05em;
+        font-family: sans-serif; font-size: 5.5pt;
+        color: #aaa; letter-spacing: .05em;
       }
-      .flyer__contact {
-        text-align: right;
-        flex: 1;
-      }
+      .flyer__contact { text-align: right; flex: 1; }
       .flyer__contact p {
-        font-size: 8pt;
-        color: #bbb;
-        font-family: sans-serif;
-        line-height: 1.5;
+        font-size: 8pt; color: #cfd7d2;
+        font-family: sans-serif; line-height: 1.5;
       }
       .flyer__contact strong {
-        display: block;
-        font-size: 12pt;
-        color: #d4a017;
-        font-family: Georgia, serif;
+        display: block; font-size: 12pt; color: var(--sun-gold);
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
         letter-spacing: .03em;
       }
       .flyer__web {
-        font-size: 7.5pt;
-        color: #888;
-        font-family: sans-serif;
+        font-size: 7.5pt; color: #98a39c; font-family: sans-serif;
       }
 
-      /* ── PRINT ── */
+      /* ── print ── */
       @media print {
-        body {
-          background: #fff;
-          padding: 0;
-          margin: 0;
-          display: block;
-        }
+        body { background: #fff; padding: 0; margin: 0; display: block; }
         .screen-controls, .hint { display: none; }
-        .a4-sheet {
-          width: 297mm;
-          height: 210mm;
-          box-shadow: none;
-          page-break-after: avoid;
-        }
-        @page {
-          size: A4 landscape;
-          margin: 0;
-        }
+        .a4-sheet { box-shadow: none; page-break-after: avoid; }
+        @page { size: A4 landscape; margin: 0; }
       }
     </style>
   </head>
@@ -286,6 +224,7 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
 
     <div class="screen-controls">
       <button class="btn" onclick="window.print()">🖨 Vytisknout</button>
+      <a class="btn" href="/letak-a4.pdf" download>📥 Stahnout PDF</a>
       <a class="btn btn--secondary" href="/">← Zpět na web</a>
     </div>
     <p class="hint">
@@ -296,53 +235,41 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
     <div class="a4-sheet">
       <div class="cut-line"></div>
 
-      <!-- ── FLYER 1 ── -->
       {[1, 2].map(() => (
         <article class="flyer">
-          <header class="flyer__header">
+          <div class="flyer__hero" style={`background-image: url('${heroImg.src}')`}>
             <div class="flyer__chess-stripe">
-              {Array.from({length: 14}).map((_, i) => <span />)}
+              {Array.from({ length: 14 }).map(() => <span />)}
             </div>
-            <p class="flyer__eyebrow">♟ Šachy Lysice &nbsp;·&nbsp; Lysice</p>
-            <h1 class="flyer__title">Jarní šachový<br/> turnaj <em>2026</em></h1>
-          </header>
-
-          <div class="flyer__img-wrap">
-            <Image
-              src={vejceSachy}
-              alt="Jarní šachový turnaj – šachové vejce v lysických barvách"
-              width={560}
-              height={210}
-              quality={85}
-            />
+            <div class="flyer__hero-text">
+              <p class="flyer__eyebrow">♟ Šachy · Lysice</p>
+              <h1 class="flyer__title">
+                <span class="flyer__title-sub">Jarní šachové</span>
+                <span class="flyer__title-main">Probuzení</span>
+                <span class="flyer__title-year">✦ 2026 ✦</span>
+              </h1>
+            </div>
           </div>
 
           <div class="flyer__body">
-            <p class="flyer__tagline">
-              Přijďte si zahrát, popovídat a strávit jarní neděli nad šachovnicí.
-            </p>
+            <p class="flyer__tagline">Jarní setkání u šachovnice pro každého.</p>
 
             <dl class="info-grid">
               <dt>📅 Kdy</dt>
               <dd><strong>Neděle 12. 4. 2026</strong></dd>
-
               <dt>⏰ Čas</dt>
               <dd>10:00 – 18:00</dd>
-
               <dt>📍 Kde</dt>
               <dd>Lysické Jablíčko, Lysice</dd>
-
-              <dt>🏆 Systém</dt>
-              <dd>Švýcarský – férový pro všechny</dd>
-
-              <dt>📲 Přihláška</dt>
-              <dd>SMS na 777 347 591</dd>
             </dl>
 
+            <div class="flyer__cta">
+              <span>📲 Přihláška SMS</span>
+              <strong>777 347 591</strong>
+            </div>
+
             <p class="flyer__note">
-              Turnaj je otevřený všem – začátečníkům i zkušeným hráčům.
-              Švýcarský systém zajistí, že si vždy zahrajete s někým podobné úrovně.
-              Vstupné symbolické. 🍏 Díky Lysickému Jablíčku za prostory.
+              Otevřené pro začátečníky i zkušené hráče. Vstupné dobrovolné. 🍏
             </p>
           </div>
 
