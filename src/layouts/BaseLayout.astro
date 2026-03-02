@@ -1,0 +1,701 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content={description} />
+    <meta property="og:site_name" content={title} />
+    <meta property="og:title" content={title} />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content={description} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* ========================================
+     RESET & BASE
+     ======================================== */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family:
+      "Source Sans 3",
+      "Source Sans Pro",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #2e2414;
+    background-color: #faf8f5;
+    background-image: repeating-conic-gradient(
+      rgba(192, 144, 68, 0.08) 0% 25%,
+      rgba(96, 56, 16, 0.09) 0% 50%
+    );
+    background-size: 100px 100px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  a {
+    color: #8b6914;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+    transition: color 0.2s ease;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: #5a4510;
+  }
+
+  /* ========================================
+     TYPOGRAPHY — unified scale
+     ======================================== */
+  h1,
+  h2,
+  h3 {
+    font-weight: 700;
+    line-height: 1.25;
+    color: #1a1206;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+  }
+
+  p {
+    max-width: 65ch;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  /* ========================================
+     LAYOUT UTILITIES
+     ======================================== */
+  .container {
+    width: 100%;
+    max-width: 52rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .section {
+    padding-block: 4rem;
+  }
+
+  .section + .section {
+    border-top: 1px solid #e8e2d8;
+  }
+
+  .flow > * + * {
+    margin-top: 1.25rem;
+  }
+
+  .flow-lg > * + * {
+    margin-top: 2rem;
+  }
+
+  /* ========================================
+     HEADER / HERO
+     ======================================== */
+  .hero {
+    text-align: center;
+    padding-block: 5rem 3rem;
+    background: linear-gradient(180deg, #f5f0e8 0%, #faf8f5 100%);
+  }
+
+  .hero__logo {
+    margin-inline: auto;
+    width: clamp(8rem, 20vw, 12rem);
+    border-radius: 1rem;
+  }
+
+  .hero__title {
+    margin-top: 1.5rem;
+  }
+
+  .hero__subtitle {
+    margin-top: 0.75rem;
+    font-weight: 400;
+    color: #5a4d3a;
+  }
+
+  .hero__desc {
+    margin-top: 1.25rem;
+    margin-inline: auto;
+    color: #4a3f30;
+  }
+
+  /* ========================================
+     NAVIGATION
+     ======================================== */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 248, 245, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e8e2d8;
+  }
+
+  .site-nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .site-nav__brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a1206;
+    text-decoration: none;
+  }
+
+  .site-nav__links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .site-nav__links a {
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: #5a4d3a;
+  }
+
+  .site-nav__links a:hover,
+  .site-nav__links a:focus-visible {
+    color: #8b6914;
+  }
+
+  /* ========================================
+     CARDS / SECTIONS
+     ======================================== */
+  .card {
+    background: #ffffff;
+    border: 1px solid #e8e2d8;
+    border-radius: 0.75rem;
+    padding: 2rem;
+  }
+
+  .highlight-box {
+    background: #f5f0e8;
+    border-left: 4px solid #8b6914;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
+  }
+
+  /* ========================================
+     FLOAT IMAGE (right)
+     ======================================== */
+  .img-float-right {
+    float: right;
+    margin: 0.25rem 0 1.25rem 2rem;
+    width: clamp(180px, 35%, 280px);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    clear: right;
+  }
+
+  .img-float-right img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .img-float-right figcaption {
+    padding: 0.4rem 0.75rem 0.5rem;
+    font-size: 0.8rem;
+    color: #7a6f60;
+    text-align: center;
+    background: #f5f0e8;
+  }
+
+  .clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* ========================================
+     GALLERY
+     ======================================== */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+  }
+
+  .gallery figure {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+  }
+
+  .gallery img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+
+  .gallery figcaption {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: #7a6f60;
+    text-align: center;
+  }
+
+  /* ========================================
+     TABLES
+     ======================================== */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    padding: 0.6rem 0.85rem;
+    text-align: left;
+    border-bottom: 1px solid #e8e2d8;
+  }
+
+  th {
+    font-weight: 600;
+    background: #f5f0e8;
+    color: #1a1206;
+    white-space: nowrap;
+  }
+
+  th a {
+    color: inherit;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* ========================================
+     LISTS
+     ======================================== */
+  .steps {
+    list-style: decimal;
+    padding-left: 1.5rem;
+  }
+
+  .steps li + li {
+    margin-top: 0.5rem;
+  }
+
+  /* ========================================
+     FORM (newsletter)
+     ======================================== */
+  .newsletter {
+    background: #1a1206;
+    color: #f5f0e8;
+    padding-block: 3.5rem;
+  }
+
+  .newsletter h2 {
+    color: #f5f0e8;
+  }
+
+  .newsletter p {
+    color: #d4c9b4;
+  }
+
+  .newsletter a {
+    color: #d4a944;
+  }
+
+  .newsletter__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 28rem;
+  }
+
+  .newsletter__form input[type="email"],
+  .newsletter__form input[type="text"] {
+    padding: 0.7rem 1rem;
+    border: 1px solid #5a4d3a;
+    border-radius: 0.4rem;
+    background: #2e2414;
+    color: #f5f0e8;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  .newsletter__form input::placeholder {
+    color: #8a7d6a;
+  }
+
+  .newsletter__form label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #a89c88;
+    cursor: pointer;
+  }
+
+  .newsletter__form input[type="checkbox"] {
+    margin-top: 0.2rem;
+    accent-color: #8b6914;
+  }
+
+  .newsletter__form button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.4rem;
+    background: #8b6914;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    align-self: flex-start;
+  }
+
+  .newsletter__form button:hover,
+  .newsletter__form button:focus-visible {
+    background: #a47d1a;
+  }
+
+  /* ========================================
+     FOOTER
+     ======================================== */
+  .site-footer {
+    text-align: center;
+    padding-block: 2rem;
+    font-size: 0.85rem;
+    color: #7a6f60;
+    border-top: 1px solid #e8e2d8;
+  }
+
+  .site-footer__links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin-top: 0.5rem;
+  }
+
+  .site-footer__links a {
+    color: #7a6f60;
+    text-decoration: none;
+  }
+
+  .site-footer__links a:hover {
+    color: #8b6914;
+  }
+
+  /* ========================================
+     BADGE
+     ======================================== */
+  .badge {
+    display: inline-block;
+    background: #8b6914;
+    color: #fff;
+    padding: 0.35rem 1.15rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ========================================
+     FEATURED SECTION (current tournament)
+     ======================================== */
+  .section--featured {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(253, 249, 240, 0.97) 0%,
+        rgba(250, 248, 245, 0.97) 100%
+      ),
+      repeating-conic-gradient(
+        rgba(192, 144, 68, 0.08) 0% 25%,
+        rgba(96, 56, 16, 0.09) 0% 50%
+      );
+    background-size:
+      auto,
+      100px 100px;
+    border-top: 3px solid #8b6914;
+    position: relative;
+  }
+
+  /* ========================================
+     TOURNAMENT HERO IMAGE (full-width)
+     ======================================== */
+  .tournament-hero-img {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+    margin: 0;
+  }
+
+  .tournament-hero-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0;
+  }
+
+  /* ========================================
+     INFO CARD
+     ======================================== */
+  .info-card {
+    background: #fff;
+    border: 2px solid #e8e2d8;
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+
+  .info-card h3 {
+    margin-bottom: 1rem;
+  }
+
+  .info-card--action {
+    border-color: #8b6914;
+    background: linear-gradient(135deg, #fffdf5 0%, #fff 100%);
+  }
+
+  .info-card__list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .info-card__item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .info-card__item dt {
+    font-weight: 600;
+    min-width: 5.5rem;
+    white-space: nowrap;
+  }
+
+  .info-card__item dd {
+    font-size: 1.05rem;
+  }
+
+  /* ========================================
+     CTA TEXT
+     ======================================== */
+  .cta-text {
+    font-size: 1.15rem;
+    text-align: center;
+    max-width: 45ch;
+    margin-inline: auto;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f5f0e8 0%, #fdf9f0 100%);
+    border-radius: 0.75rem;
+    border: 1px solid #e8e2d8;
+  }
+
+  /* ========================================
+     ARCHIVE SECTION
+     ======================================== */
+  .section--archive {
+    background: rgba(245, 240, 232, 0.6);
+  }
+
+  .section-lead {
+    color: #5a4d3a;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .archive-event {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    border: 1px solid #e8e2d8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  }
+
+  .archive-event + .archive-event {
+    margin-top: 2rem;
+  }
+
+  .archive-event > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .archive-event > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .archive-event > summary::before {
+    content: "▶";
+    font-size: 0.75rem;
+    color: #8b6914;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .archive-event[open] > summary::before {
+    transform: rotate(90deg);
+  }
+
+  .archive-event > summary h3 {
+    display: inline;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  }
+
+  .archive-date {
+    font-weight: 400;
+    font-size: 0.8em;
+    color: #7a6f60;
+    margin-left: 0.5rem;
+  }
+
+  .archive-event__content {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e8e2d8;
+  }
+
+  /* ========================================
+     RESPONSIVE
+     ======================================== */
+  @media (max-width: 40rem) {
+    .section {
+      padding-block: 2.5rem;
+    }
+
+    .hero {
+      padding-block: 3rem 2rem;
+    }
+
+    .card {
+      padding: 1.25rem;
+    }
+
+    .site-nav__links {
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .archive-event {
+      padding: 1.5rem;
+    }
+
+    .info-card {
+      padding: 1.25rem;
+    }
+
+    .img-float-right {
+      float: none;
+      width: 100%;
+      margin: 0 0 1.25rem 0;
+    }
+  }
+
+  /* ========================================
+     FONT LOADING (self-hosted via Google CDN)
+     ======================================== */
+  @font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-weight: 300 900;
+    font-display: swap;
+    src: url("https://fonts.gstatic.com/s/sourcesans3/v15/nwpBtKy2OAdR1K-IwhWudF-R9QMylBJAV3Bo8Ky461EN_io6npfB.woff2")
+      format("woff2");
+    unicode-range:
+      U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+      U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+      U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-weight: 300 900;
+    font-display: swap;
+    src: url("https://fonts.gstatic.com/s/sourcesans3/v15/nwpBtKy2OAdR1K-IwhWudF-R9QMylBJAV3Bo8Ky461EN_io6npnB.woff2")
+      format("woff2");
+    unicode-range:
+      U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+      U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+      U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  /* Print */
+  @media print {
+    .site-nav,
+    .newsletter {
+      display: none;
+    }
+  }
+</style>

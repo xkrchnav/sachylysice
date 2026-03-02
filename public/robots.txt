@@ -1,0 +1,59 @@
+# robots.txt – sachylysice.cz
+# Allow all legitimate crawlers for maximum discoverability.
+
+User-agent: *
+Allow: /
+
+# ── AI assistants & training crawlers ──────────────────────────────────────
+# Allowing these helps the site appear in AI-powered search answers
+# (ChatGPT, Perplexity, Gemini, Copilot, etc.)
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+Sitemap: https://www.sachylysice.cz/sitemap-index.xml
