@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "optimize-images": "node scripts/optimize-images.mjs",
+    "generate-qr": "node scripts/generate-qr.mjs",
     "flyer:pdf": "node scripts/generate-flyer-pdf.mjs"
   },
   "dependencies": {

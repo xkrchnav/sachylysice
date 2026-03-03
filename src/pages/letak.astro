@@ -1,9 +1,9 @@
 ---
-import { getImage } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import vejceSachy from "../assets/images/jarni/vejceSachy.jpeg";
+import qrSachylysice from "../assets/images/qr-sachylysice.png";
 
 const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
-const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%3A%2F%2Fwww.sachylysice.cz&bgcolor=ffffff&color=1a1a1a&qzone=2&format=svg";
 ---
 
 <!doctype html>
@@ -54,6 +54,12 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
         font-size: .85rem; color: #555; font-family: sans-serif;
         text-align: center; max-width: 36rem;
       }
+      .link-btn {
+        background: none; border: none; padding: 0; margin: 0;
+        color: var(--green-ink); font: inherit; cursor: pointer;
+        text-decoration: none; font-weight: bold;
+      }
+      .link-btn:hover { text-decoration: underline; }
 
       /* ── A4 landscape sheet ── */
       .a4-sheet {
@@ -213,25 +219,195 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
         font-size: 7.5pt; color: #98a39c; font-family: sans-serif;
       }
 
+      /* ── A4 portrait sheet ── */
+      .a4-sheet-full {
+        width: 210mm; height: 297mm; background: #fff;
+        display: flex; flex-direction: column; position: relative;
+        box-shadow: 0 4px 24px rgba(0,0,0,.25);
+        overflow: hidden; print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      /* ── Full-page A4 flyer ── */
+      .flyer-a4 {
+        width: 100%; height: 100%;
+        display: flex; flex-direction: column;
+        overflow: hidden; background: #fff; color: var(--ink);
+      }
+
+      .flyer-a4 .flyer__hero {
+        position: relative; flex-shrink: 0;
+        height: 145mm; overflow: hidden;
+        background-size: cover; background-position: center 35%;
+        display: flex; flex-direction: column;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .flyer-a4 .flyer__chess-stripe {
+        height: 6mm;
+      }
+
+      .flyer-a4 .flyer__hero-text {
+        padding: 8mm 10mm 10mm;
+      }
+
+      .flyer-a4 .flyer__eyebrow {
+        font-size: 32pt;
+        margin-bottom: 6mm;
+      }
+
+      .flyer-a4 .flyer__title-sub {
+        font-size: 42pt;
+        margin-bottom: 4mm;
+      }
+
+      .flyer-a4 .flyer__title-main {
+        font-size: 74pt;
+        margin-bottom: 6mm;
+      }
+
+      .flyer-a4 .flyer__title-year {
+        font-size: 36pt;
+      }
+
+      .flyer-a4 .flyer__body {
+        flex: 1; padding: 8mm 10mm 3mm;
+        gap: 3mm;
+      }
+
+      .flyer-a4 .flyer__tagline {
+        font-size: 12.5pt;
+        padding-left: 6mm;
+        margin-bottom: 0.5mm;
+      }
+
+      .flyer-a4 .info-grid {
+        gap: 5mm 6mm; font-size: 13pt;
+      }
+
+      .flyer-a4 .info-grid dt {
+        font-size: 11.5pt;
+      }
+
+      .flyer-a4 .info-grid dd {
+        font-size: 14pt;
+      }
+
+      .flyer-a4 .info-grid dd strong {
+        font-size: 16pt;
+      }
+
+      .flyer-a4 .flyer__cta {
+        padding: 5mm 8mm; font-size: 12pt;
+      }
+
+      .flyer-a4 .flyer__cta strong {
+        font-size: 15pt;
+      }
+
+      .flyer-a4 .flyer__note {
+        font-size: 9.5pt;
+        padding-top: 2mm;
+        margin-top: auto;
+        line-height: 1.4;
+      }
+
+      .flyer-a4 .flyer__footer {
+        padding: 4mm 8mm;
+      }
+
+      .flyer-a4 .flyer__qr-block img {
+        width: 28mm; height: 28mm;
+      }
+
+      .flyer-a4 .flyer__qr-label {
+        font-size: 7pt;
+      }
+
+      .flyer-a4 .flyer__contact p {
+        font-size: 10pt;
+      }
+
+      .flyer-a4 .flyer__contact strong {
+        font-size: 16pt;
+      }
+
+      .flyer-a4 .flyer__web {
+        font-size: 9.5pt;
+      }
+
+      /* ── separator section ── */
+      .flyer-section {
+        text-align: center; padding: 3rem 2rem;
+        background: #f5f5f5; color: #666;
+        font-family: sans-serif; font-size: 0.95rem;
+      }
+
+      .flyer-section h3 {
+        color: #333; margin-bottom: 0.7rem;
+        font-size: 1.3rem;
+      }
+
+      .flyer-section p {
+        margin-bottom: 0.5rem;
+      }
+
+      .flyer-section a {
+        color: var(--green-ink); text-decoration: none; font-weight: bold;
+      }
+
+      .flyer-section a:hover {
+        text-decoration: underline;
+      }
+
       /* ── print ── */
       @media print {
-        body { background: #fff; padding: 0; margin: 0; display: block; }
-        .screen-controls, .hint { display: none; }
-        .a4-sheet { box-shadow: none; page-break-after: avoid; }
-        @page { size: A4 landscape; margin: 0; }
+        @page { margin: 0; }
+        html, body {
+          background: #fff; padding: 0; margin: 0;
+          display: block; width: 100%; height: auto;
+        }
+        .screen-controls, .hint, .flyer-section { display: none !important; }
+        .a4-sheet {
+          box-shadow: none;
+          width: 100vw; height: 100vh;
+          page-break-inside: avoid;
+          page-break-after: always;
+        }
+        .a4-sheet .flyer {
+          width: 50%; height: 100%;
+        }
+        .a4-sheet-full {
+          box-shadow: none;
+          width: 100vw; height: 100vh;
+          page-break-inside: avoid;
+          page-break-after: always;
+        }
+        .a4-sheet-full .flyer-a4 {
+          width: 100%; height: 100%;
+        }
+        .flyer__hero {
+          height: auto; max-height: 55%;
+        }
+        .flyer-a4 .flyer__hero {
+          height: auto; max-height: 48%;
+        }
       }
     </style>
   </head>
   <body>
 
     <div class="screen-controls">
-      <button class="btn" onclick="window.print()">🖨 Vytisknout</button>
-      <a class="btn" href="/letak-a4.pdf" download>📥 Stahnout PDF</a>
+      <button class="btn" onclick="printA5()">🖨 Tisk A5 (2x)</button>
+      <button class="btn" onclick="printA4()">🖨 Tisk A4 (1x)</button>
+      <a class="btn" href="/letak-a5.pdf" download>📥 PDF A5 (2x)</a>
+      <a class="btn" href="/letak-a4.pdf" download>📥 PDF A4 (1x)</a>
       <a class="btn btn--secondary" href="/">← Zpět na web</a>
     </div>
     <p class="hint">
-      Stránka obsahuje <strong>dva letáčky A5</strong> vedle sebe na formátu A4 na šíř.
-      Vytiskněte, přeložte a nastřihněte. Nebo sdílejte odkaz na leták přímo.
+      <strong>Leták A5:</strong> Dva letáčky vedle sebe na formátu A4 na šíř – vytiskněte, přeložte a nastřihněte.<br />
+      <strong>Leták A4:</strong> Jeden větší leták na celou stránku – ideální pro nástěnku. <button type="button" class="link-btn" onclick="document.querySelector('.a4-sheet-full').scrollIntoView({behavior: 'smooth'})">Přejít na A4 leták ↓</button>
     </p>
 
     <div class="a4-sheet">
@@ -277,7 +453,7 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
 
           <footer class="flyer__footer">
             <div class="flyer__qr-block">
-              <img src={qr} alt="QR kód na web sachylysice.cz" />
+              <Image src={qrSachylysice} alt="QR kód na web sachylysice.cz" width={140} height={140} loading="eager" />
               <span class="flyer__qr-label">více info</span>
             </div>
             <div class="flyer__contact">
@@ -290,5 +466,133 @@ const qr = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%
       ))}
     </div>
 
+    <!-- ── SEPARATOR & DESCRIPTION ── -->
+    <div class="flyer-section">
+      <h3>📄 Leták A4 – Pro nástěnku a větší tisk</h3>
+      <p>Leták v plné velikosti formátu A4. Ideální pro vytisknutí na opravu a umístění na úřední desku, do kaváren či do kulturních domů.</p>
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: #888;">
+        👉 Níže naleznete verzi A4 pro tisk a sdílení.
+      </p>
+    </div>
+
+    <!-- ── A4 FULL-PAGE FLYER ── -->
+    <div class="a4-sheet-full">
+      <article class="flyer flyer-a4">
+        <div class="flyer__hero" style={`background-image: url('${heroImg.src}')`}>
+          <div class="flyer__chess-stripe">
+            {Array.from({ length: 14 }).map(() => <span />)}
+          </div>
+          <div class="flyer__hero-text">
+            <p class="flyer__eyebrow">Šachy · Lysice</p>
+            <h1 class="flyer__title">
+              <span class="flyer__title-sub">Jarní šachové</span>
+              <span class="flyer__title-main">Probuzení</span>
+              <span class="flyer__title-year">✦ 12.4.2026 ✦</span>
+            </h1>
+          </div>
+        </div>
+
+        <div class="flyer__body">
+          <p class="flyer__tagline">Jarní setkání u šachovnice pro každého. Přijďte si zahrát bez ohledu na úroveň!</p>
+
+          <dl class="info-grid">
+            <dt>📅 Kdy</dt>
+            <dd><strong>Neděle 12. 4. 2026</strong></dd>
+            <dt>⏰ Čas</dt>
+            <dd>10:00 – 18:00</dd>
+            <dt>📍 Kde</dt>
+            <dd>Lysické Jablíčko, Lysice</dd>
+            <dt>🏆 Systém</dt>
+            <dd>Švýcarský – férový pro všechny</dd>
+            <dt>🌐 Více info</dt>
+            <dd><strong>www.sachylysice.cz</strong></dd>
+          </dl>
+
+          <div class="flyer__cta">
+            <span>📲 Přihláška SMS</span>
+            <strong>777 347 591</strong>
+          </div>
+
+          <p class="flyer__note">
+            Turnaj je otevřený všem – začátečníkům i zkušeným hráčům. Švýcarský systém zajistí, že si vždy zahrajete s někým podobné úrovně. Vstupné dobrovolné. 🍏
+          </p>
+        </div>
+
+        <footer class="flyer__footer">
+          <div class="flyer__qr-block">
+            <Image src={qrSachylysice} alt="QR kód na web sachylysice.cz" width={140} height={140} />
+            <span class="flyer__qr-label">www.sachylysice.cz</span>
+          </div>
+          <div class="flyer__contact">
+            <p>Přihlášení a info:</p>
+            <strong>777 347 591</strong>
+            <p class="flyer__web">www.sachylysice.cz</p>
+          </div>
+        </footer>
+      </article>
+    </div>
+
+    <!-- ── BACK LINK ── -->
+    <div style="margin-top: 2rem; text-align: center;">
+      <a class="btn btn--secondary" href="/">← Zpět na hlavní web</a>
+    </div>
+
+    <script is:inline>
+      function printA5() {
+        var style = document.createElement('style');
+        style.textContent = '@page { size: landscape; }';
+        document.head.appendChild(style);
+
+        var a4SheetFull = document.querySelector('.a4-sheet-full');
+        var flyerSection = document.querySelector('.flyer-section');
+        var backLink = document.querySelector('div[style*="margin-top: 2rem"]');
+        var screenControls = document.querySelector('.screen-controls');
+        var hint = document.querySelector('.hint');
+      
+        if (a4SheetFull) a4SheetFull.style.display = 'none';
+        if (flyerSection) flyerSection.style.display = 'none';
+        if (backLink) backLink.style.display = 'none';
+        if (screenControls) screenControls.style.display = 'none';
+        if (hint) hint.style.display = 'none';
+      
+        window.print();
+      
+        if (a4SheetFull) a4SheetFull.style.display = '';
+        if (flyerSection) flyerSection.style.display = '';
+        if (backLink) backLink.style.display = '';
+        if (screenControls) screenControls.style.display = '';
+        if (hint) hint.style.display = '';
+
+        document.head.removeChild(style);
+      }
+    
+      function printA4() {
+        var style = document.createElement('style');
+        style.textContent = '@page { size: portrait; }';
+        document.head.appendChild(style);
+
+        var a4Sheet = document.querySelector('.a4-sheet');
+        var flyerSection = document.querySelector('.flyer-section');
+        var backLink = document.querySelector('div[style*="margin-top: 2rem"]');
+        var screenControls = document.querySelector('.screen-controls');
+        var hint = document.querySelector('.hint');
+      
+        if (a4Sheet) a4Sheet.style.display = 'none';
+        if (flyerSection) flyerSection.style.display = 'none';
+        if (backLink) backLink.style.display = 'none';
+        if (screenControls) screenControls.style.display = 'none';
+        if (hint) hint.style.display = 'none';
+      
+        window.print();
+      
+        if (a4Sheet) a4Sheet.style.display = '';
+        if (flyerSection) flyerSection.style.display = '';
+        if (backLink) backLink.style.display = '';
+        if (screenControls) screenControls.style.display = '';
+        if (hint) hint.style.display = '';
+
+        document.head.removeChild(style);
+      }
+    </script>
   </body>
 </html>
