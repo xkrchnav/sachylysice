@@ -126,6 +126,44 @@ try {
     console.log(`✅ Generated: ${resolve(publicDir, "letak-a4.pdf")}`);
   }
 
+  // ── PNG: A4 flyer screenshot for image sharing ──
+  console.log("\n🖼️  Generating letak-a4.png (A4 for sharing)...");
+  {
+    const w = 794;
+    const h = 1123;
+    const context = await browser.newContext({
+      viewport: { width: w, height: h },
+      deviceScaleFactor: 2,
+    });
+    const page = await context.newPage();
+    await page.goto(baseUrl, { waitUntil: "networkidle" });
+
+    // Isolate the A4 flyer
+    await page.evaluate(() => {
+      const a5Sheet = document.querySelector(".a4-sheet");
+      const separator = document.querySelector(".flyer-section");
+      const backLink = document.querySelector("div[style*='margin-top']");
+      const controls = document.querySelector(".screen-controls");
+      const hint = document.querySelector(".hint");
+      if (a5Sheet) a5Sheet.style.display = "none";
+      if (separator) separator.style.display = "none";
+      if (backLink) backLink.style.display = "none";
+      if (controls) controls.style.display = "none";
+      if (hint) hint.style.display = "none";
+    });
+
+    await page.waitForTimeout(500);
+
+    const el = await page.$(".a4-sheet-full");
+    await el.screenshot({
+      path: resolve(publicDir, "letak-a4.png"),
+      type: "png",
+    });
+
+    await context.close();
+    console.log(`✅ Generated: ${resolve(publicDir, "letak-a4.png")}`);
+  }
+
   await browser.close();
   console.log("\n✨ All PDFs generated successfully!");
 } finally {
