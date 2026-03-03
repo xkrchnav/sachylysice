@@ -1,0 +1,380 @@
+---
+/**
+ * Tournament registration form — modern, mobile-first design.
+ * Validation: jméno required, at least one of email/telefon required.
+ */
+---
+
+<div class="reg">
+  <h3 class="reg__heading">Přihlaste se na turnaj</h3>
+  <p class="reg__sub">
+    Stačí jméno a&nbsp;kontakt. Kategorie vytvoříme podle přihlášených&nbsp;–
+    zahraje si každý s&nbsp;podobně zdatnými soupeři.
+  </p>
+
+  <form id="tournament-registration-form" class="reg__form">
+    <!-- row: jméno + příjmení -->
+    <div class="reg__row">
+      <div class="reg__field">
+        <label for="reg-jmeno" class="reg__label">Jméno <span class="reg__req">*</span></label>
+        <input
+          id="reg-jmeno"
+          type="text"
+          name="meno"
+          required
+          maxlength="128"
+          autocomplete="given-name"
+          class="reg__input"
+          placeholder="Jan"
+        />
+      </div>
+      <div class="reg__field">
+        <label for="reg-prijmeni" class="reg__label">Příjmení</label>
+        <input
+          id="reg-prijmeni"
+          type="text"
+          name="priezvisko"
+          maxlength="128"
+          autocomplete="family-name"
+          class="reg__input"
+          placeholder="Novák"
+        />
+      </div>
+    </div>
+
+    <!-- rok narození -->
+    <div class="reg__field">
+      <label for="reg-rok" class="reg__label">Rok narození</label>
+      <input
+        id="reg-rok"
+        type="number"
+        name="rok-narozeni"
+        min="1900"
+        max="2026"
+        class="reg__input reg__input--short"
+        placeholder="např. 1990"
+      />
+      <span class="reg__hint">Pomůže nám s&nbsp;rozdělením do kategorií.</span>
+    </div>
+
+    <!-- kontakt heading -->
+    <p class="reg__contact-note">
+      Vyplňte alespoň e-mail nebo telefon, ať vás můžeme kontaktovat.
+    </p>
+
+    <!-- row: email + telefon -->
+    <div class="reg__row">
+      <div class="reg__field">
+        <label for="reg-email" class="reg__label">E-mail</label>
+        <input
+          id="reg-email"
+          type="email"
+          name="email"
+          maxlength="128"
+          autocomplete="email"
+          class="reg__input"
+          placeholder="jan@email.cz"
+        />
+      </div>
+      <div class="reg__field">
+        <label for="reg-tel" class="reg__label">Telefon</label>
+        <input
+          id="reg-tel"
+          type="tel"
+          name="telefon"
+          maxlength="256"
+          autocomplete="tel"
+          class="reg__input"
+          placeholder="777 123 456"
+        />
+      </div>
+    </div>
+
+    <div id="tournament-form-message" class="reg__msg" aria-live="polite"></div>
+
+    <button type="submit" class="reg__btn">
+      ♟ Přihlásit se
+    </button>
+  </form>
+
+  <p class="reg__sms">
+    Nebo pošlete SMS na
+    <a href="sms:+420777347591"><strong>777&nbsp;347&nbsp;591</strong></a>.
+  </p>
+</div>
+
+<script>
+  const initTournamentForm = () => {
+    const form = document.querySelector("#tournament-registration-form");
+    const jmeno = form?.querySelector<HTMLInputElement>('input[name="meno"]');
+    const email = form?.querySelector<HTMLInputElement>('input[name="email"]');
+    const telefon = form?.querySelector<HTMLInputElement>('input[name="telefon"]');
+    const messageDiv = document.querySelector("#tournament-form-message");
+
+    if (
+      !(form instanceof HTMLFormElement) ||
+      !(jmeno instanceof HTMLInputElement) ||
+      !(email instanceof HTMLInputElement) ||
+      !(telefon instanceof HTMLInputElement) ||
+      !(messageDiv instanceof HTMLDivElement)
+    ) {
+      return;
+    }
+
+    // Clear custom validity on input
+    jmeno.addEventListener("invalid", () => {
+      if (jmeno.validity.valueMissing)
+        jmeno.setCustomValidity("Prosím vyplňte jméno.");
+    });
+    jmeno.addEventListener("input", () => jmeno.setCustomValidity(""));
+
+    // Highlight empty contact fields
+    const markContactError = (show: boolean) => {
+      [email, telefon].forEach((el) =>
+        el.classList.toggle("reg__input--error", show),
+      );
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      markContactError(false);
+
+      if (!email.value.trim() && !telefon.value.trim()) {
+        messageDiv.className = "reg__msg reg__msg--error";
+        messageDiv.textContent =
+          "Vyplňte prosím aspoň e-mail nebo telefon.";
+        markContactError(true);
+        return;
+      }
+
+      const btn = form.querySelector("button[type='submit']") as HTMLButtonElement | null;
+      if (!btn) return;
+
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = "⏳ Odesílám…";
+      messageDiv.className = "reg__msg";
+      messageDiv.textContent = "";
+
+      const formData = new FormData(form);
+      // TODO: replace with your Google Apps Script URL
+      const URL =
+        "https://script.google.com/macros/s/AKfycbzmegZxzISFaBRaM8rRBC9dlMnL5H_l0AZnQjAtS2DFvT_KMDXw_xyvS2S-3hvLhXE/exec";
+
+      try {
+        const res = await fetch(URL, { method: "POST", body: formData });
+        const json = await res.json();
+
+        if (json.status === "success") {
+          messageDiv.className = "reg__msg reg__msg--ok";
+          messageDiv.textContent = json.message;
+          form.reset();
+        } else {
+          messageDiv.className = "reg__msg reg__msg--error";
+          messageDiv.textContent = json.message;
+        }
+      } catch {
+        messageDiv.className = "reg__msg reg__msg--error";
+        messageDiv.textContent = "Něco se pokazilo. Zkuste to prosím znovu.";
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTournamentForm, { once: true });
+  } else {
+    initTournamentForm();
+  }
+</script>
+
+<style>
+  /* ── Registration form – modern card ── */
+  .reg {
+    background: #fff;
+    border: 2px solid #8b6914;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    margin-top: 1.5rem;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(139, 105, 20, 0.08);
+  }
+
+  .reg__heading {
+    font-size: 1.35rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .reg__sub {
+    color: #5a4d3a;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    max-width: 50ch;
+  }
+
+  /* form grid */
+  .reg__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .reg__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+
+  @media (min-width: 30rem) {
+    .reg__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .reg__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .reg__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1a1206;
+  }
+
+  .reg__req {
+    color: #c0392b;
+  }
+
+  .reg__input {
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid #d5cfc4;
+    border-radius: 0.55rem;
+    background: #faf8f5;
+    color: #2e2414;
+    font-size: 1rem;
+    font-family: inherit;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .reg__input:focus {
+    outline: none;
+    border-color: #8b6914;
+    box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.15);
+  }
+
+  .reg__input::placeholder {
+    color: #b0a898;
+  }
+
+  .reg__input--short {
+    max-width: 10rem;
+  }
+
+  .reg__input--error {
+    border-color: #c0392b;
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+  }
+
+  .reg__hint {
+    font-size: 0.8rem;
+    color: #8a7d6a;
+  }
+
+  .reg__contact-note {
+    font-size: 0.88rem;
+    color: #5a4d3a;
+    padding-top: 0.25rem;
+    border-top: 1px dashed #e8e2d8;
+    margin: 0;
+  }
+
+  /* button */
+  .reg__btn {
+    align-self: flex-start;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 0.6rem;
+    background: linear-gradient(135deg, #8b6914 0%, #a47d1a 100%);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+      transform 0.12s,
+      box-shadow 0.2s,
+      background 0.2s;
+    box-shadow:
+      0 2px 6px rgba(139, 105, 20, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .reg__btn:hover,
+  .reg__btn:focus-visible {
+    background: linear-gradient(135deg, #a47d1a 0%, #c49a24 100%);
+    transform: translateY(-1px);
+    box-shadow:
+      0 4px 12px rgba(139, 105, 20, 0.3),
+      0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .reg__btn:active {
+    transform: translateY(0);
+  }
+
+  .reg__btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+  }
+
+  /* messages */
+  .reg__msg {
+    min-height: 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 0.4rem;
+    padding: 0;
+    transition: all 0.2s;
+  }
+
+  .reg__msg--ok {
+    color: #0f7b3f;
+    background: #ecfdf5;
+    padding: 0.6rem 0.85rem;
+  }
+
+  .reg__msg--error {
+    color: #b91c1c;
+    background: #fef2f2;
+    padding: 0.6rem 0.85rem;
+  }
+
+  /* sms fallback */
+  .reg__sms {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    color: #7a6f60;
+    text-align: center;
+  }
+
+  /* mobile */
+  @media (max-width: 30rem) {
+    .reg {
+      padding: 1.25rem;
+      border-radius: 1rem;
+    }
+
+    .reg__btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

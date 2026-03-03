@@ -1,0 +1,155 @@
+<!-- Newsletter / kontakt -->
+<section id="kontakt" class="newsletter" aria-labelledby="newsletter-title">
+  <div class="container flow-lg">
+    <h2 id="newsletter-title">Nezmeškejte žádný turnaj</h2>
+    <p>
+      Dejte nám na sebe kontakt a&nbsp;my vám dáme vědět, až se bude konat
+      trénink nebo turnaj. Žádný spam, jen šachy.
+    </p>
+    <form id="newsletter-form" class="newsletter__form">
+      <input
+        type="email"
+        id="email-input"
+        name="email"
+        placeholder="E-mail"
+        required
+        maxlength="128"
+        autocomplete="email"
+      />
+      <input
+        type="text"
+        name="telefon"
+        placeholder="Telefon (nepovinné)"
+        maxlength="256"
+        autocomplete="tel"
+      />
+      <label>
+        <input
+          type="checkbox"
+          id="consent-input"
+          name="souhlas"
+          value="checked"
+          required
+        />
+        <span
+          >Souhlasím se zpracováním osobních údajů pro zasílání novinek.</span
+        >
+      </label>
+      <button type="submit">Chci být v&nbsp;obraze</button>
+      <div id="form-message" style="margin-top: 1rem; display: none;"></div>
+    </form>
+
+    <ul class="site-footer__links" style="margin-top: 2rem;">
+      <li>
+        <a
+          href="https://www.facebook.com/groups/lysice"
+          rel="noopener noreferrer"
+          target="_blank"
+          aria-label="Facebook skupina Lysice a okolí sobě"
+        >
+          Facebook
+        </a>
+      </li>
+      <li>
+        <a
+          href="tel:+420777347591"
+          aria-label="Zavolat na telefon +420 777 347 591"
+        >
+          +420 777 347 591
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  const initNewsletterForm = () => {
+    const form = document.querySelector("#newsletter-form");
+    const emailInput = document.querySelector("#email-input");
+    const consentInput = document.querySelector("#consent-input");
+    const messageDiv = document.querySelector("#form-message");
+
+    if (
+      !(form instanceof HTMLFormElement) ||
+      !(emailInput instanceof HTMLInputElement) ||
+      !(consentInput instanceof HTMLInputElement) ||
+      !(messageDiv instanceof HTMLDivElement)
+    ) {
+      console.error("Newsletter form elements not found");
+      return;
+    }
+
+    emailInput.addEventListener("invalid", () => {
+      if (emailInput.validity.valueMissing) {
+        emailInput.setCustomValidity("Prosím vyplňte e-mail.");
+      } else if (emailInput.validity.typeMismatch) {
+        emailInput.setCustomValidity(
+          "Prosím zadejte platnou e-mailovou adresu.",
+        );
+      }
+    });
+
+    emailInput.addEventListener("input", () => {
+      emailInput.setCustomValidity("");
+    });
+
+    consentInput.addEventListener("invalid", () => {
+      consentInput.setCustomValidity(
+        "Musíte souhlasit se zpracováním osobních údajů.",
+      );
+    });
+
+    consentInput.addEventListener("change", () => {
+      consentInput.setCustomValidity("");
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (!(submitButton instanceof HTMLButtonElement)) return;
+
+      const originalText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = "Odesílám...";
+      messageDiv.style.display = "none";
+
+      const formData = new FormData(form);
+      const APPS_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbywrEfS95SVZUi-DHN3cHuTGNixfcUj3um3ZWiPLR3HyeD9oZ5yn6MAIZvZiXAlZjt6/exec";
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        messageDiv.style.display = "block";
+        if (result.status === "success") {
+          messageDiv.style.color = "#10b981";
+          messageDiv.textContent = result.message;
+          form.reset();
+        } else {
+          messageDiv.style.color = "#ef4444";
+          messageDiv.textContent = result.message;
+        }
+      } catch (error) {
+        messageDiv.style.display = "block";
+        messageDiv.style.color = "#ef4444";
+        messageDiv.textContent = "Chyba při odesílání. Zkuste prosím znovu.";
+        console.error("Form submission error:", error);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initNewsletterForm, { once: true });
+  } else {
+    initNewsletterForm();
+  }
+</script>

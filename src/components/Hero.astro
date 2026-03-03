@@ -1,0 +1,24 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/images/logo.png";
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container flow">
+    <Image
+      src={logo}
+      alt="Logo Šachy Lysice"
+      width={240}
+      class="hero__logo"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <h1 id="hero-title" class="hero__title">Šachy Lysice</h1>
+    <h2 class="hero__subtitle">Vítejte u šachovnice v&nbsp;Lysicích</h2>
+    <p class="hero__desc">
+      Jsme komunita nadšenců, kteří věří, že šachy patří k&nbsp;životu
+      v&nbsp;našem krásném zámeckém městysi stejně jako dobrá káva nebo
+      nedělní procházka.
+    </p>
+  </div>
+</section>
