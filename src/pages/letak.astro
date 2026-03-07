@@ -1,9 +1,7 @@
 ---
-import { Image, getImage } from "astro:assets";
+import { Image } from "astro:assets";
 import vejceSachy from "../assets/images/jarni/vejceSachy.jpeg";
 import qrSachylysice from "../assets/images/qr-sachylysice.png";
-
-const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
 ---
 
 <!doctype html>
@@ -86,22 +84,17 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
         overflow: hidden; background: #fff; color: var(--ink);
       }
 
-      /* ── hero (image bg + overlay + text) ── */
+      /* ── hero (pure photo) ── */
       .flyer__hero {
         position: relative; flex-shrink: 0;
-        height: 118mm; overflow: hidden;
-        background-size: cover; background-position: center 35%;
+        height: 68mm; overflow: hidden;
         display: flex; flex-direction: column;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+        justify-content: flex-end;
       }
-      .flyer__hero::before {
-        content: "";
-        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-        background: transparent;
-        z-index: 1;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+      .flyer__hero-img {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        object-fit: cover; object-position: center 35%;
+        display: block;
       }
       .flyer__chess-stripe {
         position: relative; z-index: 2;
@@ -111,44 +104,37 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
       .flyer__chess-stripe span:nth-child(odd)  { background: rgba(255,255,255,.8); }
       .flyer__chess-stripe span:nth-child(even) { background: rgba(11, 43, 28, .65); }
 
-      .flyer__hero-text {
-        position: relative; z-index: 2;
-        flex: 1; display: flex; flex-direction: column;
+      /* ── header (text below image) ── */
+      .flyer__header {
+        display: flex; flex-direction: column;
         align-items: center; justify-content: center;
-        padding: 3mm 5mm 5mm; text-align: center;
+        padding: 2mm 5mm 0mm; text-align: center;
+        background: #fff;
       }
       .flyer__eyebrow {
-        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; font-size: 26pt; font-weight: 900;
-        letter-spacing: .28em; text-transform: uppercase;
-        color: #fff; margin-bottom: 4mm;
-        -webkit-text-stroke: 0.5px #000;
-        text-shadow: 0 2px 8px rgba(0,0,0,.9);
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; font-size: 16pt; font-weight: 900;
+        letter-spacing: .25em; text-transform: uppercase;
+        color: var(--green-ink); margin-bottom: 1mm;
       }
-      .flyer__title { line-height: 1; color: #fff; }
+      .flyer__title { line-height: 1; color: var(--ink); }
       .flyer__title-sub {
-        display: block; font-size: 34pt; font-weight: bolder;
+        display: block; font-size: 36pt; font-weight: bolder;
         font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-        letter-spacing: .15em; text-transform: uppercase;
-        color: #fff; 
-        -webkit-text-stroke: 1px #0f3f28;
-        text-shadow: 0 3px 12px rgba(0,0,0,.95);
-        margin-bottom: 3mm;
+        letter-spacing: .05em; text-transform: uppercase;
+        color: var(--ink); 
+        margin-bottom: 1mm;
       }
       .flyer__title-main {
-        display: block; font-size: 62pt; font-weight: bolder;
+        display: block; font-size: 22pt; font-weight: bold;
         font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-        text-transform: uppercase; letter-spacing: .04em;
-        color: #fff;
-        -webkit-text-stroke: 1.5px #0f3f28;
-        text-shadow: 0 4px 16px rgba(0,0,0,.95);
-        line-height: 1; margin-bottom: 4mm;
+        text-transform: uppercase; letter-spacing: .15em;
+        color: var(--green-deep);
+        line-height: 1; margin-bottom: 1.5mm;
       }
       .flyer__title-year {
-        display: block; font-size: 30pt; font-weight: 900;
+        display: block; font-size: 14pt; font-weight: bold;
         font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-        color: #fff; letter-spacing: .4em;
-        -webkit-text-stroke: 1px #0f3f28;
-        text-shadow: 0 3px 10px rgba(0,0,0,.9);
+        color: var(--sun-gold); letter-spacing: .3em;
       }
 
       /* ── body info ── */
@@ -189,8 +175,8 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
       /* ── footer ── */
       .flyer__footer {
         background: #0f2f20; color: #fff;
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 2.5mm 4mm; gap: 3mm; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        padding: 2.5mm 4mm; gap: 1.5mm; flex-shrink: 0;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
       }
@@ -204,19 +190,6 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
       .flyer__qr-label {
         font-family: sans-serif; font-size: 5.5pt;
         color: #aaa; letter-spacing: .05em;
-      }
-      .flyer__contact { text-align: right; flex: 1; }
-      .flyer__contact p {
-        font-size: 8pt; color: #cfd7d2;
-        font-family: sans-serif; line-height: 1.5;
-      }
-      .flyer__contact strong {
-        display: block; font-size: 12pt; color: var(--sun-gold);
-        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-        letter-spacing: .03em;
-      }
-      .flyer__web {
-        font-size: 7.5pt; color: #98a39c; font-family: sans-serif;
       }
 
       /* ── A4 portrait sheet ── */
@@ -237,104 +210,91 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
 
       .flyer-a4 .flyer__hero {
         position: relative; flex-shrink: 0;
-        height: 145mm; overflow: hidden;
-        background-size: cover; background-position: center 35%;
+        height: 90mm; overflow: hidden;
         display: flex; flex-direction: column;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+        justify-content: flex-end;
       }
 
       .flyer-a4 .flyer__chess-stripe {
-        height: 6mm;
+        height: 5mm;
       }
 
-      .flyer-a4 .flyer__hero-text {
-        padding: 8mm 10mm 10mm;
+      .flyer-a4 .flyer__header {
+        display: flex; flex-direction: column; align-items: center; text-align: center;
+        padding: 3mm 10mm 1mm;
       }
 
       .flyer-a4 .flyer__eyebrow {
-        font-size: 32pt;
-        margin-bottom: 6mm;
+        font-size: 20pt;
+        margin-bottom: 1.5mm;
       }
 
       .flyer-a4 .flyer__title-sub {
-        font-size: 42pt;
-        margin-bottom: 4mm;
+        font-size: 48pt;
+        margin-bottom: 1.5mm;
       }
 
       .flyer-a4 .flyer__title-main {
-        font-size: 74pt;
-        margin-bottom: 6mm;
+        font-size: 30pt;
+        margin-bottom: 2mm;
       }
 
       .flyer-a4 .flyer__title-year {
-        font-size: 36pt;
+        font-size: 20pt;
       }
 
       .flyer-a4 .flyer__body {
-        flex: 1; padding: 8mm 10mm 3mm;
-        gap: 3mm;
+        flex: 1; padding: 5mm 10mm 2mm;
+        gap: 2.5mm;
       }
 
       .flyer-a4 .flyer__tagline {
-        font-size: 12.5pt;
+        font-size: 12pt;
         padding-left: 6mm;
-        margin-bottom: 0.5mm;
+        margin-bottom: 0;
       }
 
       .flyer-a4 .info-grid {
-        gap: 5mm 6mm; font-size: 13pt;
+        gap: 3.5mm 6mm; font-size: 13pt;
       }
 
       .flyer-a4 .info-grid dt {
-        font-size: 11.5pt;
+        font-size: 11pt;
       }
 
       .flyer-a4 .info-grid dd {
-        font-size: 14pt;
+        font-size: 13pt;
       }
 
       .flyer-a4 .info-grid dd strong {
-        font-size: 16pt;
-      }
-
-      .flyer-a4 .flyer__cta {
-        padding: 5mm 8mm; font-size: 12pt;
-      }
-
-      .flyer-a4 .flyer__cta strong {
         font-size: 15pt;
       }
 
+      .flyer-a4 .flyer__cta {
+        padding: 4mm 8mm; font-size: 11pt;
+      }
+
+      .flyer-a4 .flyer__cta strong {
+        font-size: 14pt;
+      }
+
       .flyer-a4 .flyer__note {
-        font-size: 9.5pt;
-        padding-top: 2mm;
+        font-size: 9pt;
+        padding-top: 1.5mm;
         margin-top: auto;
-        line-height: 1.4;
+        line-height: 1.3;
       }
 
       .flyer-a4 .flyer__footer {
-        padding: 4mm 8mm;
+        padding: 3mm 8mm;
       }
 
       .flyer-a4 .flyer__qr-block img {
-        width: 28mm; height: 28mm;
+        width: 26mm; height: 26mm;
       }
 
       .flyer-a4 .flyer__qr-label {
         font-size: 7pt;
-      }
-
-      .flyer-a4 .flyer__contact p {
-        font-size: 10pt;
-      }
-
-      .flyer-a4 .flyer__contact strong {
-        font-size: 16pt;
-      }
-
-      .flyer-a4 .flyer__web {
-        font-size: 9.5pt;
       }
 
       /* ── separator section ── */
@@ -387,11 +347,12 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
         .a4-sheet-full .flyer-a4 {
           width: 100%; height: 100%;
         }
+        /* Fixed hero height for consistent print layout */
         .flyer__hero {
-          height: auto; max-height: 55%;
+          height: 68mm;
         }
         .flyer-a4 .flyer__hero {
-          height: auto; max-height: 48%;
+          height: 90mm;
         }
       }
     </style>
@@ -415,18 +376,19 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
 
       {[1, 2].map(() => (
         <article class="flyer">
-          <div class="flyer__hero" style={`background-image: url('${heroImg.src}')`}>
+          <div class="flyer__hero">
+            <Image src={vejceSachy} alt="Šachové vejce – jarní turnaj" width={800} quality={90} class="flyer__hero-img" loading="eager" />
             <div class="flyer__chess-stripe">
               {Array.from({ length: 14 }).map(() => <span />)}
             </div>
-            <div class="flyer__hero-text">
-              <p class="flyer__eyebrow">Šachy · Lysice</p>
-              <h1 class="flyer__title">
-                <span class="flyer__title-sub">Jarní šachové</span>
-                <span class="flyer__title-main">Probuzení</span>
-                <span class="flyer__title-year">✦ 12.4.2026 ✦</span>
-              </h1>
-            </div>
+          </div>
+          <div class="flyer__header">
+            <p class="flyer__eyebrow">Šachy · Lysice</p>
+            <h1 class="flyer__title">
+              <span class="flyer__title-sub">Jarní šachové</span>
+              <span class="flyer__title-main">Probuzení</span>
+              <span class="flyer__title-year">✦ 12.4.2026 ✦</span>
+            </h1>
           </div>
 
           <div class="flyer__body">
@@ -454,12 +416,7 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
           <footer class="flyer__footer">
             <div class="flyer__qr-block">
               <Image src={qrSachylysice} alt="QR kód na web sachylysice.cz" width={140} height={140} loading="eager" />
-              <span class="flyer__qr-label">více info</span>
-            </div>
-            <div class="flyer__contact">
-              <p>Přihlášení a info:</p>
-              <strong>777 347 591</strong>
-              <p class="flyer__web">www.sachylysice.cz</p>
+              <span class="flyer__qr-label">více info na www.sachylysice.cz</span>
             </div>
           </footer>
         </article>
@@ -478,11 +435,13 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
     <!-- ── A4 FULL-PAGE FLYER ── -->
     <div class="a4-sheet-full">
       <article class="flyer flyer-a4">
-        <div class="flyer__hero" style={`background-image: url('${heroImg.src}')`}>
-          <div class="flyer__chess-stripe">
-            {Array.from({ length: 14 }).map(() => <span />)}
+        <div class="flyer__hero">
+            <Image src={vejceSachy} alt="Šachové vejce – jarní turnaj" width={800} quality={90} class="flyer__hero-img" loading="eager" />
+            <div class="flyer__chess-stripe">
+              {Array.from({ length: 14 }).map(() => <span />)}
+            </div>
           </div>
-          <div class="flyer__hero-text">
+          <div class="flyer__header">
             <p class="flyer__eyebrow">Šachy · Lysice</p>
             <h1 class="flyer__title">
               <span class="flyer__title-sub">Jarní šachové</span>
@@ -490,7 +449,6 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
               <span class="flyer__title-year">✦ 12.4.2026 ✦</span>
             </h1>
           </div>
-        </div>
 
         <div class="flyer__body">
           <p class="flyer__tagline">Jarní setkání u šachovnice pro každého. Přijďte si zahrát bez ohledu na úroveň!</p>
@@ -519,16 +477,11 @@ const heroImg = await getImage({ src: vejceSachy, width: 800, quality: 90 });
         </div>
 
         <footer class="flyer__footer">
-          <div class="flyer__qr-block">
-            <Image src={qrSachylysice} alt="QR kód na web sachylysice.cz" width={140} height={140} />
-            <span class="flyer__qr-label">www.sachylysice.cz</span>
-          </div>
-          <div class="flyer__contact">
-            <p>Přihlášení a info:</p>
-            <strong>777 347 591</strong>
-            <p class="flyer__web">www.sachylysice.cz</p>
-          </div>
-        </footer>
+            <div class="flyer__qr-block">
+              <Image src={qrSachylysice} alt="QR kód na web sachylysice.cz" width={140} height={140} loading="eager" />
+              <span class="flyer__qr-label">více info na www.sachylysice.cz</span>
+            </div>
+          </footer>
       </article>
     </div>
 
