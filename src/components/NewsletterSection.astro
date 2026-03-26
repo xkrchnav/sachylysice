@@ -52,6 +52,14 @@
       </li>
       <li>
         <a
+          href="mailto:info@sachylysice.cz"
+          aria-label="Poslat e-mail na info@sachylysice.cz"
+        >
+          info@sachylysice.cz
+        </a>
+      </li>
+      <li>
+        <a
           href="tel:+420777347591"
           aria-label="Zavolat na telefon +420 777 347 591"
         >
@@ -148,7 +156,9 @@
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNewsletterForm, { once: true });
+    document.addEventListener("DOMContentLoaded", initNewsletterForm, {
+      once: true,
+    });
   } else {
     initNewsletterForm();
   }
