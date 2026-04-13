@@ -1,12 +1,37 @@
-<!-- Site navigation -->
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+const isHome = Astro.url.pathname === "/";
+---
+
 <nav class="site-nav" aria-label="Hlavní navigace">
   <div class="container site-nav__inner">
     <a href="/" class="site-nav__brand">♟ Šachy Lysice</a>
-    <ul class="site-nav__links">
-      <li><a href="#o-nas">O nás</a></li>
-      <li><a href="#jarni-turnaj">Jarní turnaj</a></li>
-      <li><a href="#archiv">Archiv</a></li>
-      <li><a href="#kontakt">Kontakt</a></li>
-    </ul>
+    <div class="site-nav__right">
+      <ul class="site-nav__links">
+        {
+          isHome ? (
+            <li>
+              <a href="#akce">Akce</a>
+            </li>
+          ) : (
+            <li>
+              <a href="/#akce">Akce</a>
+            </li>
+          )
+        }
+        <li><a href="/kronika">Kronika</a></li>
+        <li><a href={isHome ? "#kontakt" : "/#kontakt"}>Kontakt</a></li>
+      </ul>
+      <ThemeToggle />
+    </div>
   </div>
 </nav>
+
+<style>
+  .site-nav__right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+</style>

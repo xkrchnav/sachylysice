@@ -1,0 +1,134 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Nav from "../../components/Nav.astro";
+import NewsletterSection from "../../components/NewsletterSection.astro";
+import Footer from "../../components/Footer.astro";
+
+const posts = (await getCollection("kronika")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const title = "Kronika | Šachy Lysice";
+const description = "Ohlédněte se s námi za šachovými akcemi v Lysicích.";
+---
+
+<BaseLayout title={title} description={description}>
+  <Nav />
+
+  <main>
+    <section class="section" aria-labelledby="kronika-title">
+      <div class="container flow-lg">
+        <h1 id="kronika-title">Kronika</h1>
+        <p class="section-lead">
+          Ohlédněte se s&nbsp;námi za tím, co už máme za sebou. Každá akce má
+          svůj příběh — klikněte a&nbsp;přečtěte si ho.
+        </p>
+
+        <div class="kronika-list">
+          {posts.map((post) => (
+            <a href={`/kronika/${post.id}`} class="kronika-card">
+              <figure class="kronika-card__img">
+                <Image
+                  src={post.data.photo}
+                  alt={post.data.title}
+                  width={480}
+                  height={320}
+                />
+              </figure>
+              <div class="kronika-card__body">
+                <time class="kronika-card__date" datetime={post.data.date.toISOString()}>
+                  {post.data.date.toLocaleDateString("cs-CZ", {
+                    year: "numeric",
+                    month: "long",
+                  })}
+                </time>
+                <h2 class="kronika-card__title">{post.data.title}</h2>
+                <p class="kronika-card__intro">{post.data.intro}</p>
+                <span class="kronika-card__link">Číst dále →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <NewsletterSection />
+  <Footer />
+</BaseLayout>
+
+<style>
+  .kronika-list {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .kronika-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    background: var(--color-card-bg, #fff);
+    border: 1px solid var(--color-border, #e8e2d8);
+    border-radius: 1rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+
+  .kronika-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  @media (min-width: 40rem) {
+    .kronika-card {
+      grid-template-columns: 280px 1fr;
+    }
+  }
+
+  .kronika-card__img {
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .kronika-card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 3 / 2;
+  }
+
+  .kronika-card__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .kronika-card__date {
+    font-size: 0.85rem;
+    color: var(--color-muted, #7a6f60);
+    text-transform: capitalize;
+  }
+
+  .kronika-card__title {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    line-height: 1.3;
+    color: var(--color-heading, #1a1206);
+  }
+
+  .kronika-card__intro {
+    color: var(--color-text-secondary, #4a3f30);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .kronika-card__link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-accent, #8b6914);
+    margin-top: auto;
+  }
+</style>

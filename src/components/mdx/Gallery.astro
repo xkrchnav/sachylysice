@@ -1,0 +1,16 @@
+---
+/**
+ * Gallery — responsive image grid with lightbox support.
+ * Usage in MDX: <Gallery images={[{src, alt, caption}]} />
+ * Or wrap <figure> children for manual composition.
+ */
+interface Props {
+  label?: string;
+}
+
+const { label = 'Fotogalerie' } = Astro.props;
+---
+
+<div class="gallery" role="group" aria-label={label}>
+  <slot />
+</div>

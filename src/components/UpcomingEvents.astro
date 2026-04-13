@@ -1,0 +1,42 @@
+---
+/**
+ * UpcomingEvents — placeholder for future events on the main page.
+ */
+---
+
+<section id="akce" class="section section--featured" aria-labelledby="events-title">
+  <div class="container flow-lg">
+    <h2 id="events-title">Nadcházející akce</h2>
+    <div class="upcoming-placeholder">
+      <p>
+        ♟️ Připravujeme další šachové akce v&nbsp;Lysicích. Sledujte nás
+        pro aktuální informace!
+      </p>
+      <p>
+        Přihlaste se k&nbsp;odběru novinek níže, ať vám nic neuteče.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .upcoming-placeholder {
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-card-bg, #fff);
+    border: 2px dashed var(--color-border, #e8e2d8);
+    border-radius: 1rem;
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .upcoming-placeholder p {
+    margin-inline: auto;
+    color: var(--color-text-secondary, #5a4d3a);
+  }
+
+  .upcoming-placeholder p + p {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+  }
+</style>

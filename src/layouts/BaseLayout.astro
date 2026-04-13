@@ -12,7 +12,7 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="description" content={description} />
     <meta property="og:site_name" content={title} />
     <meta property="og:title" content={title} />
@@ -23,6 +23,49 @@ const { title, description } = Astro.props;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
+    {/* Anti-flash theme script — runs before first paint */}
+    <script is:inline>
+      (function() {
+        var stored = localStorage.getItem('theme');
+        var btn = null;
+        function getSystemTheme() {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function applyTheme(mode) {
+          var resolved = mode === 'auto' ? getSystemTheme() : mode;
+          document.documentElement.setAttribute('data-theme', resolved);
+          document.documentElement.setAttribute('data-theme-mode', mode);
+        }
+        applyTheme(stored || 'auto');
+
+        // Listen for system theme changes when in auto mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+          var current = localStorage.getItem('theme') || 'auto';
+          if (current === 'auto') applyTheme('auto');
+        });
+
+        // Theme toggle handler — attached after DOM is ready
+        function initToggle() {
+          btn = document.getElementById('theme-toggle');
+          if (!btn) return;
+          var mode = localStorage.getItem('theme') || 'auto';
+          btn.setAttribute('data-theme-mode', mode);
+          btn.addEventListener('click', function() {
+            var current = localStorage.getItem('theme') || 'auto';
+            var next = current === 'auto' ? 'light' : current === 'light' ? 'dark' : 'auto';
+            localStorage.setItem('theme', next);
+            applyTheme(next);
+            btn.setAttribute('data-theme-mode', next);
+          });
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initToggle, { once: true });
+        } else {
+          initToggle();
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
@@ -30,6 +73,78 @@ const { title, description } = Astro.props;
 </html>
 
 <style is:global>
+  /* ========================================
+     CSS CUSTOM PROPERTIES — LIGHT THEME
+     ======================================== */
+  :root {
+    --color-bg: #faf8f5;
+    --color-bg-pattern-1: rgba(192, 144, 68, 0.08);
+    --color-bg-pattern-2: rgba(96, 56, 16, 0.09);
+    --color-text: #2e2414;
+    --color-heading: #1a1206;
+    --color-text-secondary: #4a3f30;
+    --color-muted: #7a6f60;
+    --color-accent: #8b6914;
+    --color-accent-hover: #5a4510;
+    --color-accent-light: #a47d1a;
+    --color-border: #e8e2d8;
+    --color-card-bg: #ffffff;
+    --color-highlight-bg: #f5f0e8;
+    --color-hero-start: #f5f0e8;
+    --color-hero-end: #faf8f5;
+    --color-nav-bg: rgba(250, 248, 245, 0.92);
+    --color-nav-text: #5a4d3a;
+    --color-badge-bg: #8b6914;
+    --color-featured-start: rgba(253, 249, 240, 0.97);
+    --color-featured-end: rgba(250, 248, 245, 0.97);
+    --color-archive-bg: rgba(245, 240, 232, 0.6);
+    --color-newsletter-bg: #1a1206;
+    --color-newsletter-text: #f5f0e8;
+    --color-newsletter-muted: #d4c9b4;
+    --color-newsletter-accent: #d4a944;
+    --color-newsletter-input-bg: #2e2414;
+    --color-newsletter-input-border: #5a4d3a;
+    --color-hover-bg: rgba(0, 0, 0, 0.05);
+    --color-table-header-bg: #f5f0e8;
+    --color-img-shadow: rgba(0, 0, 0, 0.1);
+  }
+
+  /* ========================================
+     DARK THEME
+     ======================================== */
+  [data-theme="dark"] {
+    --color-bg: #1a1a1e;
+    --color-bg-pattern-1: rgba(192, 144, 68, 0.04);
+    --color-bg-pattern-2: rgba(96, 56, 16, 0.05);
+    --color-text: #e0dbd4;
+    --color-heading: #f5f0e8;
+    --color-text-secondary: #b8b0a4;
+    --color-muted: #8a8278;
+    --color-accent: #d4a944;
+    --color-accent-hover: #e8c060;
+    --color-accent-light: #c49a24;
+    --color-border: #3a3530;
+    --color-card-bg: #242428;
+    --color-highlight-bg: #2a2520;
+    --color-hero-start: #1e1e22;
+    --color-hero-end: #1a1a1e;
+    --color-nav-bg: rgba(26, 26, 30, 0.92);
+    --color-nav-text: #b8b0a4;
+    --color-badge-bg: #b8910e;
+    --color-featured-start: rgba(30, 28, 24, 0.97);
+    --color-featured-end: rgba(26, 26, 30, 0.97);
+    --color-archive-bg: rgba(30, 28, 24, 0.6);
+    --color-newsletter-bg: #111114;
+    --color-newsletter-text: #e0dbd4;
+    --color-newsletter-muted: #8a8278;
+    --color-newsletter-accent: #d4a944;
+    --color-newsletter-input-bg: #1e1e22;
+    --color-newsletter-input-border: #3a3530;
+    --color-hover-bg: rgba(255, 255, 255, 0.06);
+    --color-table-header-bg: #2a2520;
+    --color-img-shadow: rgba(0, 0, 0, 0.3);
+  }
+
   /* ========================================
      RESET & BASE
      ======================================== */
@@ -55,13 +170,14 @@ const { title, description } = Astro.props;
       sans-serif;
     font-size: 1.125rem;
     line-height: 1.7;
-    color: #2e2414;
-    background-color: #faf8f5;
+    color: var(--color-text);
+    background-color: var(--color-bg);
     background-image: repeating-conic-gradient(
-      rgba(192, 144, 68, 0.08) 0% 25%,
-      rgba(96, 56, 16, 0.09) 0% 50%
+      var(--color-bg-pattern-1) 0% 25%,
+      var(--color-bg-pattern-2) 0% 50%
     );
     background-size: 100px 100px;
+    transition: background-color 0.3s, color 0.3s;
   }
 
   img {
@@ -71,7 +187,7 @@ const { title, description } = Astro.props;
   }
 
   a {
-    color: #8b6914;
+    color: var(--color-accent);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.15em;
@@ -80,7 +196,7 @@ const { title, description } = Astro.props;
 
   a:hover,
   a:focus-visible {
-    color: #5a4510;
+    color: var(--color-accent-hover);
   }
 
   /* ========================================
@@ -91,7 +207,7 @@ const { title, description } = Astro.props;
   h3 {
     font-weight: 700;
     line-height: 1.25;
-    color: #1a1206;
+    color: var(--color-heading);
     text-wrap: balance;
   }
 
@@ -136,7 +252,7 @@ const { title, description } = Astro.props;
   }
 
   .section + .section {
-    border-top: 1px solid #e8e2d8;
+    border-top: 1px solid var(--color-border);
   }
 
   .flow > * + * {
@@ -153,7 +269,7 @@ const { title, description } = Astro.props;
   .hero {
     text-align: center;
     padding-block: 5rem 3rem;
-    background: linear-gradient(180deg, #f5f0e8 0%, #faf8f5 100%);
+    background: linear-gradient(180deg, var(--color-hero-start) 0%, var(--color-hero-end) 100%);
   }
 
   .hero__logo {
@@ -169,13 +285,13 @@ const { title, description } = Astro.props;
   .hero__subtitle {
     margin-top: 0.75rem;
     font-weight: 400;
-    color: #5a4d3a;
+    color: var(--color-nav-text);
   }
 
   .hero__desc {
     margin-top: 1.25rem;
     margin-inline: auto;
-    color: #4a3f30;
+    color: var(--color-text-secondary);
   }
 
   /* ========================================
@@ -185,9 +301,9 @@ const { title, description } = Astro.props;
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(250, 248, 245, 0.92);
+    background: var(--color-nav-bg);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid #e8e2d8;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .site-nav__inner {
@@ -202,7 +318,7 @@ const { title, description } = Astro.props;
   .site-nav__brand {
     font-weight: 700;
     font-size: 1.1rem;
-    color: #1a1206;
+    color: var(--color-heading);
     text-decoration: none;
   }
 
@@ -215,27 +331,27 @@ const { title, description } = Astro.props;
   .site-nav__links a {
     font-size: 0.95rem;
     text-decoration: none;
-    color: #5a4d3a;
+    color: var(--color-nav-text);
   }
 
   .site-nav__links a:hover,
   .site-nav__links a:focus-visible {
-    color: #8b6914;
+    color: var(--color-accent);
   }
 
   /* ========================================
      CARDS / SECTIONS
      ======================================== */
   .card {
-    background: #ffffff;
-    border: 1px solid #e8e2d8;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
     border-radius: 0.75rem;
     padding: 2rem;
   }
 
   .highlight-box {
-    background: #f5f0e8;
-    border-left: 4px solid #8b6914;
+    background: var(--color-highlight-bg);
+    border-left: 4px solid var(--color-accent);
     border-radius: 0 0.5rem 0.5rem 0;
     padding: 1.25rem 1.5rem;
   }
@@ -249,7 +365,7 @@ const { title, description } = Astro.props;
     width: clamp(180px, 35%, 280px);
     border-radius: 0.75rem;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px var(--color-img-shadow);
     clear: right;
   }
 
@@ -262,9 +378,9 @@ const { title, description } = Astro.props;
   .img-float-right figcaption {
     padding: 0.4rem 0.75rem 0.5rem;
     font-size: 0.8rem;
-    color: #7a6f60;
+    color: var(--color-muted);
     text-align: center;
-    background: #f5f0e8;
+    background: var(--color-highlight-bg);
   }
 
   .clearfix::after {
@@ -298,7 +414,7 @@ const { title, description } = Astro.props;
   .gallery figcaption {
     margin-top: 0.4rem;
     font-size: 0.85rem;
-    color: #7a6f60;
+    color: var(--color-muted);
     text-align: center;
   }
 
@@ -320,13 +436,13 @@ const { title, description } = Astro.props;
   td {
     padding: 0.6rem 0.85rem;
     text-align: left;
-    border-bottom: 1px solid #e8e2d8;
+    border-bottom: 1px solid var(--color-border);
   }
 
   th {
     font-weight: 600;
-    background: #f5f0e8;
-    color: #1a1206;
+    background: var(--color-table-header-bg);
+    color: var(--color-heading);
     white-space: nowrap;
   }
 
@@ -354,21 +470,21 @@ const { title, description } = Astro.props;
      FORM (newsletter)
      ======================================== */
   .newsletter {
-    background: #1a1206;
-    color: #f5f0e8;
+    background: var(--color-newsletter-bg);
+    color: var(--color-newsletter-text);
     padding-block: 3.5rem;
   }
 
   .newsletter h2 {
-    color: #f5f0e8;
+    color: var(--color-newsletter-text);
   }
 
   .newsletter p {
-    color: #d4c9b4;
+    color: var(--color-newsletter-muted);
   }
 
   .newsletter a {
-    color: #d4a944;
+    color: var(--color-newsletter-accent);
   }
 
   .newsletter__form {
@@ -381,10 +497,10 @@ const { title, description } = Astro.props;
   .newsletter__form input[type="email"],
   .newsletter__form input[type="text"] {
     padding: 0.7rem 1rem;
-    border: 1px solid #5a4d3a;
+    border: 1px solid var(--color-newsletter-input-border);
     border-radius: 0.4rem;
-    background: #2e2414;
-    color: #f5f0e8;
+    background: var(--color-newsletter-input-bg);
+    color: var(--color-newsletter-text);
     font-size: 1rem;
     font-family: inherit;
   }
@@ -404,14 +520,14 @@ const { title, description } = Astro.props;
 
   .newsletter__form input[type="checkbox"] {
     margin-top: 0.2rem;
-    accent-color: #8b6914;
+    accent-color: var(--color-accent);
   }
 
   .newsletter__form button {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 0.4rem;
-    background: #8b6914;
+    background: var(--color-accent);
     color: #fff;
     font-size: 1rem;
     font-weight: 600;
@@ -423,7 +539,7 @@ const { title, description } = Astro.props;
 
   .newsletter__form button:hover,
   .newsletter__form button:focus-visible {
-    background: #a47d1a;
+    background: var(--color-accent-light);
   }
 
   /* ========================================
@@ -433,8 +549,8 @@ const { title, description } = Astro.props;
     text-align: center;
     padding-block: 2rem;
     font-size: 0.85rem;
-    color: #7a6f60;
-    border-top: 1px solid #e8e2d8;
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-border);
   }
 
   .site-footer__links {
@@ -446,12 +562,12 @@ const { title, description } = Astro.props;
   }
 
   .site-footer__links a {
-    color: #7a6f60;
+    color: var(--color-muted);
     text-decoration: none;
   }
 
   .site-footer__links a:hover {
-    color: #8b6914;
+    color: var(--color-accent);
   }
 
   /* ========================================
@@ -459,7 +575,7 @@ const { title, description } = Astro.props;
      ======================================== */
   .badge {
     display: inline-block;
-    background: #8b6914;
+    background: var(--color-badge-bg);
     color: #fff;
     padding: 0.35rem 1.15rem;
     border-radius: 2rem;
@@ -476,17 +592,17 @@ const { title, description } = Astro.props;
     background:
       linear-gradient(
         180deg,
-        rgba(253, 249, 240, 0.97) 0%,
-        rgba(250, 248, 245, 0.97) 100%
+        var(--color-featured-start) 0%,
+        var(--color-featured-end) 100%
       ),
       repeating-conic-gradient(
-        rgba(192, 144, 68, 0.08) 0% 25%,
-        rgba(96, 56, 16, 0.09) 0% 50%
+        var(--color-bg-pattern-1) 0% 25%,
+        var(--color-bg-pattern-2) 0% 50%
       );
     background-size:
       auto,
       100px 100px;
-    border-top: 3px solid #8b6914;
+    border-top: 3px solid var(--color-accent);
     position: relative;
   }
 
@@ -511,8 +627,8 @@ const { title, description } = Astro.props;
      INFO CARD
      ======================================== */
   .info-card {
-    background: #fff;
-    border: 2px solid #e8e2d8;
+    background: var(--color-card-bg);
+    border: 2px solid var(--color-border);
     border-radius: 1rem;
     padding: 2rem;
   }
@@ -522,8 +638,8 @@ const { title, description } = Astro.props;
   }
 
   .info-card--action {
-    border-color: #8b6914;
-    background: linear-gradient(135deg, #fffdf5 0%, #fff 100%);
+    border-color: var(--color-accent);
+    background: linear-gradient(135deg, var(--color-highlight-bg) 0%, var(--color-card-bg) 100%);
   }
 
   .info-card__list {
@@ -556,101 +672,19 @@ const { title, description } = Astro.props;
     max-width: 45ch;
     margin-inline: auto;
     padding: 1.5rem;
-    background: linear-gradient(135deg, #f5f0e8 0%, #fdf9f0 100%);
+    background: linear-gradient(135deg, var(--color-highlight-bg) 0%, var(--color-card-bg) 100%);
     border-radius: 0.75rem;
-    border: 1px solid #e8e2d8;
+    border: 1px solid var(--color-border);
   }
-
-  .letak-promo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .75rem;
-    padding: 1.25rem 1.5rem;
-    background: #f0f4f0;
-    border: 1px dashed #7aaa8a;
-    border-radius: .75rem;
-    text-align: center;
-    font-size: .95rem;
-    color: #3a5a3a;
-  }
-
-  .btn-letak {
-    display: inline-block;
-    background: #1a472a;
-    color: #fff;
-    padding: .55rem 1.4rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: .95rem;
-    font-family: inherit;
-    transition: background .2s;
-  }
-  .btn-letak:hover { background: #2d6a44; }
-
 
   .section--archive {
-    background: rgba(245, 240, 232, 0.6);
+    background: var(--color-archive-bg);
   }
 
   .section-lead {
-    color: #5a4d3a;
+    color: var(--color-nav-text);
     font-size: 1.1rem;
     margin-bottom: 1rem;
-  }
-
-  .archive-event {
-    background: #fff;
-    border-radius: 1rem;
-    padding: 2.5rem;
-    border: 1px solid #e8e2d8;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  }
-
-  .archive-event + .archive-event {
-    margin-top: 2rem;
-  }
-
-  .archive-event > summary {
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .archive-event > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .archive-event > summary::before {
-    content: "▶";
-    font-size: 0.75rem;
-    color: #8b6914;
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .archive-event[open] > summary::before {
-    transform: rotate(90deg);
-  }
-
-  .archive-event > summary h3 {
-    display: inline;
-    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  }
-
-  .archive-date {
-    font-weight: 400;
-    font-size: 0.8em;
-    color: #7a6f60;
-    margin-left: 0.5rem;
-  }
-
-  .archive-event__content {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e8e2d8;
   }
 
   /* ========================================
@@ -672,10 +706,6 @@ const { title, description } = Astro.props;
     .site-nav__links {
       gap: 1rem;
       font-size: 0.85rem;
-    }
-
-    .archive-event {
-      padding: 1.5rem;
     }
 
     .info-card {

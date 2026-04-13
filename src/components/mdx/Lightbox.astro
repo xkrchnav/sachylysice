@@ -1,0 +1,226 @@
+---
+/**
+ * Lightbox — full-size image overlay for kronika detail pages.
+ * Drop this component at the bottom of any page/layout that shows images.
+ * It automatically attaches click handlers to all images inside
+ * `.kronika-content` (or any container with `data-lightbox`).
+ */
+---
+
+<div
+  id="lightbox-overlay"
+  class="lightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Zobrazení obrázku"
+  hidden
+>
+  <button
+    class="lightbox__close"
+    aria-label="Zavřít"
+    type="button">&times;</button>
+  <button
+    class="lightbox__prev"
+    aria-label="Předchozí obrázek"
+    type="button">&#8249;</button>
+  <button
+    class="lightbox__next"
+    aria-label="Následující obrázek"
+    type="button">&#8250;</button>
+  <img class="lightbox__img" src="" alt="" />
+  <p class="lightbox__caption"></p>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    cursor: zoom-out;
+  }
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  .lightbox__img {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    cursor: default;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .lightbox__caption {
+    color: #ccc;
+    font-size: 0.9rem;
+    text-align: center;
+    max-width: 60ch;
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+    z-index: 2;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .lightbox__close:hover {
+    opacity: 1;
+  }
+
+  .lightbox__prev,
+  .lightbox__next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    z-index: 2;
+    opacity: 0.6;
+    transition: opacity 0.2s, background 0.2s;
+    line-height: 1;
+  }
+
+  .lightbox__prev:hover,
+  .lightbox__next:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .lightbox__prev {
+    left: 1rem;
+  }
+
+  .lightbox__next {
+    right: 1rem;
+  }
+
+  @media (max-width: 40rem) {
+    .lightbox__prev,
+    .lightbox__next {
+      font-size: 1.8rem;
+      padding: 0.4rem 0.6rem;
+    }
+  }
+</style>
+
+<script>
+  function initLightbox() {
+    const overlay = document.getElementById('lightbox-overlay');
+    if (!overlay) return;
+
+    const img = overlay.querySelector('.lightbox__img') as HTMLImageElement;
+    const caption = overlay.querySelector('.lightbox__caption') as HTMLElement;
+    const closeBtn = overlay.querySelector('.lightbox__close') as HTMLButtonElement;
+    const prevBtn = overlay.querySelector('.lightbox__prev') as HTMLButtonElement;
+    const nextBtn = overlay.querySelector('.lightbox__next') as HTMLButtonElement;
+
+    let images: { src: string; alt: string; caption: string }[] = [];
+    let currentIndex = 0;
+
+    function collectImages() {
+      const container =
+        document.querySelector('[data-lightbox]') ??
+        document.querySelector('.kronika-content');
+      if (!container) return;
+
+      images = [];
+      const imgEls = container.querySelectorAll('img');
+
+      imgEls.forEach((imgEl, i) => {
+        const src = imgEl.getAttribute('src') ?? '';
+        const alt = imgEl.getAttribute('alt') ?? '';
+        const fig = imgEl.closest('figure');
+        const cap = fig?.querySelector('figcaption')?.textContent ?? alt;
+
+        images.push({ src, alt, caption: cap });
+
+        imgEl.style.cursor = 'zoom-in';
+        imgEl.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openLightbox(i);
+        });
+      });
+    }
+
+    function openLightbox(index: number) {
+      currentIndex = index;
+      updateImage();
+      overlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+
+    function closeLightbox() {
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    function updateImage() {
+      const item = images[currentIndex];
+      if (!item) return;
+      img.src = item.src;
+      img.alt = item.alt;
+      caption.textContent = item.caption;
+      prevBtn.style.display = images.length > 1 ? '' : 'none';
+      nextBtn.style.display = images.length > 1 ? '' : 'none';
+    }
+
+    function showPrev() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateImage();
+    }
+
+    function showNext() {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateImage();
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+    nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (overlay.hidden) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPrev();
+      if (e.key === 'ArrowRight') showNext();
+    });
+
+    collectImages();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLightbox, { once: true });
+  } else {
+    initLightbox();
+  }
+</script>
