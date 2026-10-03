@@ -1,42 +1,125 @@
 ---
 /**
- * UpcomingEvents — placeholder for future events on the main page.
+ * UpcomingEvents — prominent invitation for the next tournament.
  */
+import { Image } from "astro:assets";
+import turnajFoto from "../assets/images/jarni/IMG_20260412_101753800_HDR.jpg";
 ---
 
 <section id="akce" class="section section--featured" aria-labelledby="events-title">
   <div class="container flow-lg">
-    <h2 id="events-title">Nadcházející akce</h2>
-    <div class="upcoming-placeholder">
-      <p>
-        ♟️ Připravujeme další šachové akce v&nbsp;Lysicích. Sledujte nás
-        pro aktuální informace!
+    <div class="event-intro">
+      <p class="badge">Pozvánka na turnaj</p>
+      <h2 id="events-title">Druhý předvánoční turnaj 2026</h2>
+      <p class="section-lead">
+        Šachy, vánoční nálada a&nbsp;pohodové setkání. Přijďte si zahrát
+        do&nbsp;Lysického Jablíčka!
       </p>
+    </div>
+
+    <figure class="tournament-hero-img">
+      <Image
+        src={turnajFoto}
+        alt="Šachovnice čekají na hráče v Lysickém Jablíčku"
+        width={900}
+      />
+      <figcaption>Vzpomínka na Jarní šachové probuzení</figcaption>
+    </figure>
+
+    <div class="info-card info-card--action">
+      <h3>Kdy a kde se sejdeme?</h3>
+      <dl class="info-card__list">
+        <div class="info-card__item">
+          <dt>Datum</dt>
+          <dd>Sobota 12.&nbsp;12.&nbsp;2026</dd>
+        </div>
+        <div class="info-card__item">
+          <dt>Začátek</dt>
+          <dd>10:00</dd>
+        </div>
+        <div class="info-card__item">
+          <dt>Místo</dt>
+          <dd>Lysické Jablíčko</dd>
+        </div>
+        <div class="info-card__item">
+          <dt>Tempo</dt>
+          <dd>15&nbsp;minut + 10&nbsp;sekund na tah</dd>
+        </div>
+      </dl>
+      <p class="info-card__note">
+        Vezměte si s&nbsp;sebou <strong>šachovnici</strong> a&nbsp;<strong
+          >digitální hodiny</strong
+        >, případně mobil s&nbsp;šachovou aplikací.
+      </p>
+    </div>
+
+    <div class="cta-text event-cta">
+      <h3>Přihlášky</h3>
       <p>
-        Přihlaste se k&nbsp;odběru novinek níže, ať vám nic neuteče.
+        Místa u&nbsp;stolů jsou omezená, přihlaste se proto prosím předem
+        mailem nebo SMS:
+      </p>
+      <p class="event-cta__contacts">
+        <a class="event-cta__link" href="mailto:info@sachylysice.cz"
+          >info@sachylysice.cz</a
+        >
+        <a class="event-cta__link" href="tel:+420777347591">SMS: 777 347 591</a>
       </p>
     </div>
   </div>
 </section>
 
 <style>
-  .upcoming-placeholder {
+  .event-intro {
     text-align: center;
-    padding: 2rem;
-    background: var(--color-card-bg, #fff);
-    border: 2px dashed var(--color-border, #e8e2d8);
-    border-radius: 1rem;
-    max-width: 36rem;
-    margin-inline: auto;
   }
 
-  .upcoming-placeholder p {
+  .event-intro .section-lead {
+    max-width: 42rem;
     margin-inline: auto;
-    color: var(--color-text-secondary, #5a4d3a);
+    text-align: center;
+    text-wrap: balance;
   }
 
-  .upcoming-placeholder p + p {
-    margin-top: 0.75rem;
-    font-size: 0.95rem;
+  .tournament-hero-img figcaption {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    text-align: center;
+    background: var(--color-highlight-bg);
+  }
+
+  .info-card__note {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  .event-cta__contacts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .event-cta__link {
+    display: inline-block;
+    padding: 0.7rem 1.4rem;
+    border-radius: 2rem;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .event-cta__link:hover,
+  .event-cta__link:focus-visible {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
   }
 </style>
