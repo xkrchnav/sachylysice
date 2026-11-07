@@ -1,0 +1,348 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+import Footer from "../components/Footer.astro";
+import { turnaj } from "../data/turnaj";
+import {
+  organizaceSchema,
+  turnajSchema,
+  breadcrumbSchema,
+} from "../lib/schema";
+
+import fotoHra from "../assets/images/gallery01/da165b68_original.jpg";
+import fotoDuel from "../assets/images/gallery02/dc1a212c_original.jpg";
+
+const title = `Předvánoční šachový turnaj v Lysicích 2026 | Šachy Lysice`;
+const description =
+  "Šachový turnaj pro každého v Lysickém Jablíčku. Sobota 12. 12. 2026 od 10:00, rapid 15+10, vstup zdarma, 16 míst. Přihlaste se mailem nebo SMS.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={turnaj.obrazek}
+  ogType="event"
+  jsonLd={[organizaceSchema, turnajSchema, breadcrumbSchema]}
+>
+  <Nav />
+
+  <main>
+    <section class="section event-hero">
+      <div class="container flow">
+        <p class="badge">Pozvánka na turnaj</p>
+        <h1>{turnaj.nazev}</h1>
+        <p class="event-hero__lead">
+          V&nbsp;sobotu 12.&nbsp;prosince 2026 od&nbsp;10&nbsp;hodin se znovu
+          sejdeme nad šachovnicemi v&nbsp;Lysickém Jablíčku. Žádná honba za
+          ELO&nbsp;body – jen předvánoční setkání, pár dobrých partií a&nbsp;čas
+          zastavit se v&nbsp;tom předvánočním shonu.
+        </p>
+        <ul class="event-hero__facts">
+          <li><strong>12. 12. 2026</strong> sobota, start 10:00</li>
+          <li><strong>Lysické Jablíčko</strong>, Halasova 102, Lysice</li>
+          <li><strong>Vstup zdarma</strong>, dobrovolný příspěvek na místě</li>
+          <li><strong>16 míst</strong> u čtyř stolů</li>
+        </ul>
+        <div class="event-hero__actions">
+          <a class="btn btn--primary" href={`mailto:${turnaj.email}?subject=Přihláška na šachový turnaj 12. 12. 2026`}>
+            Přihlásit se mailem
+          </a>
+          <a class="btn" href="sms:+420777347591">SMS na 777 347 591</a>
+          <a class="btn btn--ghost" href={turnaj.facebook}>Událost na Facebooku</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="detaily">
+      <div class="container flow-lg">
+        <h2 id="detaily">Kdy, kde a jak se hraje</h2>
+        <div class="info-card">
+          <dl class="info-card__list">
+            <div class="info-card__item">
+              <dt>Datum</dt>
+              <dd>sobota 12.&nbsp;12.&nbsp;2026</dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Začátek</dt>
+              <dd>10:00</dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Konec</dt>
+              <dd>podle počtu kol, počítáme spíš do odpoledne</dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Místo</dt>
+              <dd>
+                {turnaj.misto}, {turnaj.ulice}, {turnaj.psc} {turnaj.obec}
+                (<a href={turnaj.mapaUrl}>zobrazit na mapě</a>)
+              </dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Tempo</dt>
+              <dd>rapid {turnaj.tempo}</dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Systém</dt>
+              <dd>{turnaj.system}</dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Kapacita</dt>
+              <dd>16&nbsp;hráčů – místa se rezervují předem</dd>
+            </div>
+            <div class="info-card__item">
+              <dt>Vstup</dt>
+              <dd>zdarma, dobrovolný příspěvek na místě vítáme</dd>
+            </div>
+          </dl>
+          <p class="info-card__note">
+            Čas odpočítáváme na telefonu nebo na hodinách. Kdo má digitální
+            šachové hodiny, ať je vezme – budeme rádi za každé.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pro-koho">
+      <div class="container flow">
+        <h2 id="pro-koho">Pro koho to je</h2>
+        <p>
+          Pro úplně všechny. Nejsme šachový klub a&nbsp;ani jím být nechceme –
+          nesháníme ELO&nbsp;body a&nbsp;neřešíme tabulky svazů. U&nbsp;našich
+          stolů sedají zkušení matadoři, nadšení amatéři, kteří si chtějí po
+          práci jen tak zahrát, i&nbsp;úplní začátečníci, které teprve láká
+          magie 64&nbsp;polí.
+        </p>
+        <p>
+          Loni se turnaje zúčastnil i&nbsp;jedenáctiletý kluk a&nbsp;odešel
+          s&nbsp;figurkou zlatého jezdce pro nejmladšího hráče. Vítáme děti,
+          rodiče, babičky i&nbsp;ty, kdo si chtějí jen sednout, koukat
+          a&nbsp;pokecat. Kdo hrát nechce, nemusí – přijít se podívat je taky
+          dobrý důvod.
+        </p>
+        <figure class="img-float-right">
+          <Image
+            src={fotoHra}
+            alt="Několik šachových stolů obsazených hráči různého věku"
+            width={280}
+          />
+          <figcaption>Tak to u nás vypadá</figcaption>
+        </figure>
+        <p>
+          A&nbsp;když dorazí ostřílený profík? Tím lépe. Klidně ho vyzveme na
+          simultánku – deset statečných amatérů proti jednomu mistrovi.
+        </p>
+        <div class="clearfix"></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="s-sebou">
+      <div class="container flow-lg">
+        <h2 id="s-sebou">Co si vzít s sebou</h2>
+        <ul class="event-list">
+          <li>
+            <strong>Šachovnici</strong> – pár svých máme, ale kdyby nás přišlo
+            víc, nemusela by vyjít na každého.
+          </li>
+          <li>
+            <strong>Digitální hodiny</strong>, případně mobil s šachovou
+            aplikací – čas budeme odpočítávat přes něj.
+          </li>
+          <li>
+            <strong>Vlastní občerstvení</strong> – kdo chce, přinese si, na co má
+            chuť. Pár minerálek a nealko piv zajistíme.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="prihlasky">
+      <div class="container flow-lg">
+        <h2 id="prihlasky">Přihlášky</h2>
+        <p>
+          Místa u&nbsp;stolů jsou omezená, proto se prosím přihlaste předem.
+          Stačí krátká zpráva – kvůli tomu, abychom věděli, kolik připravit
+          stolů a&nbsp;ať máme všichni při hře pohodlí.
+        </p>
+        <div class="cta-text">
+          <p class="event-cta__contacts">
+            <a class="event-cta__link" href={`mailto:${turnaj.email}`}>{turnaj.email}</a>
+            <a class="event-cta__link" href="sms:+420777347591">SMS: 777 347 591</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--archive" aria-labelledby="minule">
+      <div class="container flow">
+        <h2 id="minule">Jak to vypadalo minule</h2>
+        <p>
+          Tohle bude náš třetí turnaj. O&nbsp;tom prvním a&nbsp;jarním si můžete
+          přečíst v&nbsp;kronice – včetně výsledkových tabulek a&nbsp;fotografií.
+        </p>
+        <ul class="event-links">
+          <li>
+            <a href="/kronika/prvni-predvanocni-turnaj-2025/"
+              >První předvánoční turnaj 2025</a
+            >
+          </li>
+          <li>
+            <a href="/kronika/jarni-sachove-probuzeni-2026/"
+              >Jarní šachové probuzení 2026</a
+            >
+          </li>
+        </ul>
+        <figure class="event-photo">
+          <Image
+            src={fotoDuel}
+            alt="Dva hráči soustředěně hrají šachovou partii"
+            width={900}
+          />
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <NewsletterSection />
+  <Footer />
+</BaseLayout>
+
+<style>
+  .event-hero {
+    background: linear-gradient(
+      180deg,
+      var(--color-featured-start) 0%,
+      var(--color-featured-end) 100%
+    );
+    border-bottom: 3px solid var(--color-accent);
+    padding-block: 4rem 3rem;
+  }
+
+  .event-hero h1 {
+    font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  }
+
+  .event-hero__lead {
+    font-size: 1.15rem;
+    color: var(--color-text-secondary);
+  }
+
+  .event-hero__facts {
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .event-hero__facts li {
+    padding-left: 1.6rem;
+    position: relative;
+  }
+
+  .event-hero__facts li::before {
+    content: "♟";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+  }
+
+  .event-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.4rem;
+    border-radius: 2rem;
+    border: 2px solid var(--color-accent);
+    background: transparent;
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .btn:hover,
+  .btn:focus-visible {
+    background: var(--color-highlight-bg);
+    color: var(--color-accent-hover);
+  }
+
+  .btn--primary {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .btn--primary:hover,
+  .btn--primary:focus-visible {
+    background: var(--color-accent-hover);
+    color: #fff;
+  }
+
+  .btn--ghost {
+    border-color: var(--color-border);
+    color: var(--color-nav-text);
+  }
+
+  .info-card__note {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  .event-list {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.5rem;
+  }
+
+  .event-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .event-photo {
+    margin: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 16px var(--color-img-shadow);
+  }
+
+  .event-photo img {
+    width: 100%;
+    height: auto;
+  }
+
+  .event-cta__contacts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .event-cta__link {
+    display: inline-block;
+    padding: 0.7rem 1.4rem;
+    border-radius: 2rem;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .event-cta__link:hover,
+  .event-cta__link:focus-visible {
+    background: var(--color-accent-hover);
+    color: #fff;
+  }
+</style>

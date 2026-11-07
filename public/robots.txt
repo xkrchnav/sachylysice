@@ -56,4 +56,4 @@ Allow: /
 User-agent: YouBot
 Allow: /
 
-Sitemap: https://www.sachylysice.cz/sitemap-index.xml
+Sitemap: https://sachylysice.cz/sitemap-index.xml

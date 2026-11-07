@@ -7,13 +7,25 @@ import UpcomingEvents from "../components/UpcomingEvents.astro";
 import KronikaTeasers from "../components/KronikaTeasers.astro";
 import NewsletterSection from "../components/NewsletterSection.astro";
 import Footer from "../components/Footer.astro";
+import { turnaj } from "../data/turnaj";
+import {
+  organizaceSchema,
+  webSchema,
+  turnajSchema,
+  breadcrumbSchema,
+} from "../lib/schema";
 
-const title = "Šachy Lysice";
+const title = "Šachy Lysice – šachový turnaj 12. 12. 2026 pro každého";
 const description =
-  "Sousedské šachy v zámeckých Lysicích. Hrajeme pro radost a setkání.";
+  "Sousedské šachy v Lysicích na Blanensku. Turnaj pro začátečníky i matadory 12. 12. 2026 v Lysickém Jablíčku, vstup zdarma. Hrajeme pro radost.";
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={turnaj.obrazek}
+  jsonLd={[organizaceSchema, webSchema, turnajSchema, breadcrumbSchema]}
+>
   <Nav />
 
   <main>

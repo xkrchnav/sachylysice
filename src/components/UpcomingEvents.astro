@@ -45,11 +45,25 @@ import turnajFoto from "../assets/images/jarni/IMG_20260412_101753800_HDR.jpg";
           <dt>Tempo</dt>
           <dd>15&nbsp;minut + 10&nbsp;sekund na tah</dd>
         </div>
+        <div class="info-card__item">
+          <dt>Vstup</dt>
+          <dd>zdarma, dobrovolný příspěvek</dd>
+        </div>
+        <div class="info-card__item">
+          <dt>Kapacita</dt>
+          <dd>16&nbsp;hráčů u&nbsp;čtyř stolů</dd>
+        </div>
       </dl>
       <p class="info-card__note">
         Vezměte si s&nbsp;sebou <strong>šachovnici</strong> a&nbsp;<strong
           >digitální hodiny</strong
         >, případně mobil s&nbsp;šachovou aplikací.
+      </p>
+      <p class="info-card__more">
+        <a href="/predvanocni-sachovy-turnaj-2026/"
+          >Všechny podrobnosti o&nbsp;turnaji →</a
+        >
+        <a href="/turnaj-2026.ics">Přidat do kalendáře (.ics)</a>
       </p>
     </div>
 
@@ -94,6 +108,14 @@ import turnajFoto from "../assets/images/jarni/IMG_20260412_101753800_HDR.jpg";
     padding-top: 1.25rem;
     border-top: 1px solid var(--color-border);
     color: var(--color-text-secondary);
+  }
+
+  .info-card__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 1rem;
+    font-weight: 600;
   }
 
   .event-cta__contacts {

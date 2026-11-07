@@ -5,7 +5,7 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.sachylysice.cz',
+  site: 'https://sachylysice.cz',
 
   build: {
     inlineStylesheets: 'auto',
